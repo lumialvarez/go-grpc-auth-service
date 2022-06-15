@@ -2,22 +2,20 @@ package auth
 
 import (
 	"context"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/dto"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"net/http"
 )
 
 type Server struct {
-	H   postgresql.Client
-	Jwt utils.JwtWrapper
+	Repository user.Repository
+	Jwt        utils.JwtWrapper
 }
 
 func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	var user dto.User
-
-	if result := s.H.DB.Where(&dto.User{Email: req.Email}).First(&user); result.Error == nil {
+	user, error := s.Repository.GetByEmail(req.GetEmail())
+	if error == nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusConflict,
 			Error:  "E-Mail already exists",
@@ -27,7 +25,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	user.Email = req.Email
 	user.Password = utils.HashPassword(req.Password)
 
-	s.H.DB.Create(&user)
+	s.Repository.Save(user)
 
 	return &pb.RegisterResponse{
 		Status: http.StatusCreated,
@@ -35,9 +33,8 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 }
 
 func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	var user dto.User
-
-	if result := s.H.DB.Where(&dto.User{Email: req.Email}).First(&user); result.Error != nil {
+	user, error := s.Repository.GetByEmail(req.GetEmail())
+	if error != nil {
 		return &pb.LoginResponse{
 			Status: http.StatusNotFound,
 			Error:  "User not found",
@@ -71,9 +68,8 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 		}, nil
 	}
 
-	var user dto.User
-
-	if result := s.H.DB.Where(&dto.User{Email: claims.Email}).First(&user); result.Error != nil {
+	user, error := s.Repository.GetByEmail(claims.Email)
+	if error != nil {
 		return &pb.ValidateResponse{
 			Status: http.StatusNotFound,
 			Error:  "User not found",

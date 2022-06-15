@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"google.golang.org/grpc"
 	"net"
@@ -16,31 +16,31 @@ import (
 )
 
 func Start() {
-	c, err := config.LoadConfig()
+	config, err := config.LoadConfig()
 
 	if err != nil {
 		log.Fatalln("Failed at config", err)
 	}
 
-	h := postgresql.Init(c.DBUrl)
+	userRepository := user.Init(config)
 
 	jwt := utils.JwtWrapper{
-		SecretKey:       c.JWTSecretKey,
+		SecretKey:       config.JWTSecretKey,
 		Issuer:          "go-grpc-auth-service",
 		ExpirationHours: 24 * 365,
 	}
 
-	lis, err := net.Listen("tcp", c.Port)
+	lis, err := net.Listen("tcp", config.Port)
 
 	if err != nil {
 		log.Fatalln("Failed to listing:", err)
 	}
 
-	fmt.Println("Auth Svc on", c.Port)
+	fmt.Println("Auth Svc on", config.Port)
 
 	s := auth.Server{
-		H:   h,
-		Jwt: jwt,
+		Repository: userRepository,
+		Jwt:        jwt,
 	}
 
 	grpcServer := grpc.NewServer()

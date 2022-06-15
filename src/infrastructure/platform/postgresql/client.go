@@ -1,7 +1,7 @@
 package postgresql
 
 import (
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/dao"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/dao"
 	"log"
 
 	"gorm.io/driver/postgres"
