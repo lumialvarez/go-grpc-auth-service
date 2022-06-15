@@ -2,6 +2,11 @@ package devapi
 
 import (
 	"fmt"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
+	"google.golang.org/grpc"
 	"net"
 
 	//"fmt"
@@ -17,15 +22,13 @@ func Start() {
 		log.Fatalln("Failed at config", err)
 	}
 
-	fmt.Println("Auth Svc on", c.Port)
-
-	/*h := db.Init(c.DBUrl)
+	h := postgresql.Init(c.DBUrl)
 
 	jwt := utils.JwtWrapper{
 		SecretKey:       c.JWTSecretKey,
-		Issuer:          "go-grpc-auth-svc",
+		Issuer:          "go-grpc-auth-service",
 		ExpirationHours: 24 * 365,
-	}*/
+	}
 
 	lis, err := net.Listen("tcp", c.Port)
 
@@ -35,9 +38,9 @@ func Start() {
 
 	fmt.Println("Auth Svc on", c.Port)
 
-	s := services.Server{
-		//H:   h,
-		//Jwt: jwt,
+	s := auth.Server{
+		H:   h,
+		Jwt: jwt,
 	}
 
 	grpcServer := grpc.NewServer()
