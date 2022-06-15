@@ -4,6 +4,7 @@ type User struct {
 	id       int64
 	email    string
 	password string
+	token    string
 }
 
 func NewUser(id int64, email string, password string) *User {
@@ -32,4 +33,12 @@ func (u *User) Password() string {
 
 func (u *User) SetPassword(password string) {
 	u.password = password
+}
+
+func (u *User) Token() string {
+	return u.token
+}
+
+func (u *User) SetToken(token string) {
+	u.token = token
 }
