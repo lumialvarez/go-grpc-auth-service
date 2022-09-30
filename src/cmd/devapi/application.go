@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
+	repositoryUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"google.golang.org/grpc"
 	"net"
@@ -22,7 +22,7 @@ func Start() {
 		log.Fatalln("Failed at config", err)
 	}
 
-	userRepository := user.Init(config)
+	userRepository := repositoryUser.Init(config)
 
 	jwt := utils.JwtWrapper{
 		SecretKey:       config.JWTSecretKey,
@@ -38,10 +38,13 @@ func Start() {
 
 	fmt.Println("Auth Svc on", config.Port)
 
-	s := auth.Server{
+	s := auth.Server_borrar{
 		Repository: userRepository,
 		Jwt:        jwt,
 	}
+
+	/*validate.NewUseCaseValidateUser(userRepository, &serviceJwtUser.Service{})
+	s := auth.NewHandler()*/
 
 	grpcServer := grpc.NewServer()
 

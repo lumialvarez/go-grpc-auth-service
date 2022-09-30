@@ -1,4 +1,4 @@
-package user
+package serviceJwtUser
 
 import (
 	"errors"

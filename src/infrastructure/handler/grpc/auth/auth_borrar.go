@@ -3,17 +3,17 @@ package auth
 import (
 	"context"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
+	repositoryUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"net/http"
 )
 
-type Server struct {
-	Repository user.Repository
+type Server_borrar struct {
+	Repository repositoryUser.Repository
 	Jwt        utils.JwtWrapper
 }
 
-func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+func (s *Server_borrar) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	user, error := s.Repository.GetByEmail(req.GetEmail())
 	if error == nil {
 		return &pb.RegisterResponse{
@@ -32,7 +32,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	}, nil
 }
 
-func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s *Server_borrar) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, error := s.Repository.GetByEmail(req.GetEmail())
 	if error != nil {
 		return &pb.LoginResponse{
@@ -58,7 +58,7 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 	}, nil
 }
 
-func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+func (s *Server_borrar) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 	claims, err := s.Jwt.ValidateToken(req.Token)
 
 	if err != nil {

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"errors"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/dto"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/dto_borrar"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -20,7 +20,7 @@ type jwtClaims struct {
 	Email string
 }
 
-func (w *JwtWrapper) GenerateToken(user *dto.User) (signedToken string, err error) {
+func (w *JwtWrapper) GenerateToken(user *dto_borrar.User) (signedToken string, err error) {
 	claims := &jwtClaims{
 		Id:    user.Id,
 		Email: user.Email,

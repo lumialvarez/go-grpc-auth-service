@@ -1,4 +1,4 @@
-package dto
+package dto_borrar
 
 type User struct {
 	Id       int64  `json:"id"`
