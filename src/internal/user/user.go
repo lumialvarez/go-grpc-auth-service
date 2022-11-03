@@ -15,16 +15,8 @@ func (u *User) Id() int64 {
 	return u.id
 }
 
-func (u *User) SetId(id int64) {
-	u.id = id
-}
-
 func (u *User) Email() string {
 	return u.email
-}
-
-func (u *User) SetEmail(email string) {
-	u.email = email
 }
 
 func (u *User) Password() string {

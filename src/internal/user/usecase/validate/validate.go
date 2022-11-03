@@ -29,7 +29,7 @@ func (uc UseCaseValidateUser) Execute(ctx context.Context, domainUser *user.User
 	jwtUser, err := uc.jwtService.ValidateToken(domainUser.Token())
 
 	if err != nil {
-		//Fixme
+		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
 
 	dbUser, err := uc.repository.GetByEmail(jwtUser.Email())

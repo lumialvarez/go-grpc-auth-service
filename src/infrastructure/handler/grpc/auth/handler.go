@@ -10,35 +10,35 @@ import (
 	"net/http"
 )
 
+type UseCaseRegister interface {
+	Execute(ctx context.Context, domainUser *user.User) error
+}
+
 type UseCaseLogin interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
 type Handler struct {
-	useCaseLogin UseCaseLogin
-	repository   repositoryUser.Repository
-	jwt          utils.JwtWrapper
-	mapper       mapper.Mapper
+	useCaseRegister UseCaseRegister
+	useCaseLogin    UseCaseLogin
+	repository      repositoryUser.Repository
+	jwt             utils.JwtWrapper
+	mapper          mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseLogin UseCaseLogin, repository repositoryUser.Repository, jwt utils.JwtWrapper) Handler {
-	return Handler{useCaseLogin: useCaseLogin, repository: repository, jwt: jwt, mapper: mapper.Mapper{}}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, repository repositoryUser.Repository, jwt utils.JwtWrapper) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, repository: repository, jwt: jwt, mapper: mapper.Mapper{}}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	userl, error := s.repository.GetByEmail(req.GetEmail())
-	if error == nil {
+	error := s.useCaseRegister.Execute(ctx, s.mapper.ToDomainRegister(req))
+	if error != nil {
 		return &pb.RegisterResponse{
-			Status: http.StatusConflict,
-			Error:  "E-Mail already exists",
+			Status: http.StatusUnauthorized,
+			Error:  error.Error(),
 		}, nil
 	}
-
-	//userl.Email = req.Email
-	//userl.Password = utils.HashPassword(req.Password)
-
-	s.repository.Save(userl)
 
 	return &pb.RegisterResponse{
 		Status: http.StatusCreated,
@@ -46,7 +46,6 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-
 	domainUser, error := s.useCaseLogin.Execute(ctx, s.mapper.ToDomainLogin(req))
 	if error != nil {
 		return &pb.LoginResponse{

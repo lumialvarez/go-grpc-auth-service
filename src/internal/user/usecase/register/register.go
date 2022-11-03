@@ -2,6 +2,7 @@ package register
 
 import (
 	"context"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	domainError "github.com/lumialvarez/go-grpc-auth-service/src/internal/error"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
@@ -11,21 +12,28 @@ type Repository interface {
 	Save(user *user.User) error
 }
 
-type UseCaseRegisterUser struct {
-	repository Repository
+type JwtServiceUser interface {
+	GenerateToken(user *user.User) (signedToken string, err error)
+	ValidateToken(signedToken string) (*user.User, error)
 }
 
-func NewUseCaseRegisterUser(repository Repository) UseCaseRegisterUser {
-	return UseCaseRegisterUser{repository: repository}
+type UseCaseRegisterUser struct {
+	repository Repository
+	jwtService JwtServiceUser
+}
+
+func NewUseCaseRegisterUser(repository Repository, jwtService JwtServiceUser) UseCaseRegisterUser {
+	return UseCaseRegisterUser{repository: repository, jwtService: jwtService}
 }
 
 func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) error {
-	user, err := uc.repository.GetByEmail(domainUser.Email())
+	domainUser.SetPassword(utils.HashPassword(domainUser.Password()))
+	_, err := uc.repository.GetByEmail(domainUser.Email())
 	if err == nil {
 		return domainError.NewAlreadyExists("E-Mail already exists")
 	}
 
-	err = uc.repository.Save(user)
+	err = uc.repository.Save(domainUser)
 	if err != nil {
 		return err
 	}

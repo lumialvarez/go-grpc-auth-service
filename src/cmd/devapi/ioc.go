@@ -8,6 +8,7 @@ import (
 	serviceJwtUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/login"
+	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/register"
 )
 
 type DependenciesContainer struct {
@@ -29,13 +30,14 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 		ExpirationHours: 24 * 365,
 	}
 
+	registerUserCase := register.NewUseCaseRegisterUser(&userRepository, &jwtService)
 	useCaseLogin := login.NewUseCaseLoginUser(&userRepository, &jwtService)
 
 	/*s := auth.Handler{
 		Repository: userRepository,
 		Jwt:        jwt,
 	}*/
-	s := auth.NewHandler(useCaseLogin, userRepository, jwt)
+	s := auth.NewHandler(registerUserCase, useCaseLogin, userRepository, jwt)
 
 	return DependenciesContainer{
 		AuthService: &s,

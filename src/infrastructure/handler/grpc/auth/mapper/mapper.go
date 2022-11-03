@@ -9,10 +9,13 @@ import (
 type Mapper struct {
 }
 
+func (m Mapper) ToDomainRegister(registerReq *pb.RegisterRequest) *user.User {
+	return user.NewUser(0, registerReq.Email, registerReq.Password)
+}
+
 func (m Mapper) ToDomainLogin(loginReq *pb.LoginRequest) *user.User {
 	return user.NewUser(0, loginReq.Email, loginReq.Password)
 }
-
 func (m Mapper) ToDTO(domainUser *user.User) *dao.User {
 	daoUser := dao.User{
 		Id:       domainUser.Id(),
