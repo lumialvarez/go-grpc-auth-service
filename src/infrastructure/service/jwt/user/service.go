@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user/dto"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	"time"
 )
@@ -12,6 +13,7 @@ type Service struct {
 	SecretKey       string
 	Issuer          string
 	ExpirationHours int64
+	mapper.Mapper
 }
 
 func (s *Service) GenerateToken(user *user.User) (signedToken string, err error) {
@@ -60,6 +62,6 @@ func (s *Service) ValidateToken(signedToken string) (*user.User, error) {
 		return nil, errors.New("JWT is expired")
 	}
 	//Fixme
-	return nil, nil
+	return s.ToDomain(claims), nil
 
 }

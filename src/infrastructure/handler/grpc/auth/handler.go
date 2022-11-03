@@ -4,8 +4,6 @@ import (
 	"context"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	repositoryUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	"net/http"
 )
@@ -18,21 +16,24 @@ type UseCaseLogin interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
+type UseCaseValidate interface {
+	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
+}
+
 type Handler struct {
 	useCaseRegister UseCaseRegister
 	useCaseLogin    UseCaseLogin
-	repository      repositoryUser.Repository
-	jwt             utils.JwtWrapper
-	mapper          mapper.Mapper
+	useCaseValidate UseCaseValidate
+	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, repository repositoryUser.Repository, jwt utils.JwtWrapper) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, repository: repository, jwt: jwt, mapper: mapper.Mapper{}}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	error := s.useCaseRegister.Execute(ctx, s.mapper.ToDomainRegister(req))
+	error := s.useCaseRegister.Execute(ctx, s.ToDomainRegister(req))
 	if error != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusUnauthorized,
@@ -46,7 +47,7 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	domainUser, error := s.useCaseLogin.Execute(ctx, s.mapper.ToDomainLogin(req))
+	domainUser, error := s.useCaseLogin.Execute(ctx, s.ToDomainLogin(req))
 	if error != nil {
 		return &pb.LoginResponse{
 			Status: http.StatusUnauthorized,
@@ -61,25 +62,16 @@ func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginRes
 }
 
 func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
-	claims, err := s.jwt.ValidateToken(req.Token)
-
-	if err != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusBadRequest,
-			Error:  err.Error(),
-		}, nil
-	}
-
-	userl, error := s.repository.GetByEmail(claims.Email)
+	domainUser, error := s.useCaseValidate.Execute(ctx, s.ToDomainValidate(req))
 	if error != nil {
 		return &pb.ValidateResponse{
-			Status: http.StatusNotFound,
-			Error:  "User not found",
+			Status: http.StatusUnauthorized,
+			Error:  error.Error(),
 		}, nil
 	}
 
 	return &pb.ValidateResponse{
 		Status: http.StatusOK,
-		UserId: userl.Id(),
+		UserId: domainUser.Id(),
 	}, nil
 }

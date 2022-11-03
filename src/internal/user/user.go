@@ -7,8 +7,8 @@ type User struct {
 	token    string
 }
 
-func NewUser(id int64, email string, password string) *User {
-	return &User{id: id, email: email, password: password}
+func NewUser(id int64, email string, password string, token string) *User {
+	return &User{id: id, email: email, password: password, token: token}
 }
 
 func (u *User) Id() int64 {

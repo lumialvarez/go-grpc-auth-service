@@ -34,7 +34,7 @@ func (uc UseCaseValidateUser) Execute(ctx context.Context, domainUser *user.User
 
 	dbUser, err := uc.repository.GetByEmail(jwtUser.Email())
 	if err != nil {
-		return nil, domainError.NewNotFound("User not found")
+		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
 
 	return dbUser, nil
