@@ -2,7 +2,6 @@ package repositoryUser
 
 import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/dto_borrar"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/dao"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/mapper"
@@ -20,7 +19,7 @@ func Init(config config.Config) Repository {
 
 func (repository *Repository) GetByEmail(email string) (*user.User, error) {
 	var daoUser dao.User
-	result := repository.postgresql.DB.Where(&dto_borrar.User{Email: email}).First(&daoUser)
+	result := repository.postgresql.DB.Where(&dao.User{Email: email}).First(&daoUser)
 	if result.Error != nil {
 		return nil, result.Error
 	}
