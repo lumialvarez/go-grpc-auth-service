@@ -54,7 +54,7 @@ func (s *Service) ValidateToken(signedToken string) (*user.User, error) {
 
 	if !ok {
 		//Fixme
-		return nil, errors.New("Couldn't parse claims")
+		return nil, errors.New("couldn't parse claims")
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {

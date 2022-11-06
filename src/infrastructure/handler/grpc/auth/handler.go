@@ -33,11 +33,11 @@ func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useC
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	error := s.useCaseRegister.Execute(ctx, s.ToDomainRegister(req))
-	if error != nil {
+	err := s.useCaseRegister.Execute(ctx, s.ToDomainRegister(req))
+	if err != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusUnauthorized,
-			Error:  error.Error(),
+			Error:  err.Error(),
 		}, nil
 	}
 
@@ -47,11 +47,11 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	domainUser, error := s.useCaseLogin.Execute(ctx, s.ToDomainLogin(req))
-	if error != nil {
+	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLogin(req))
+	if err != nil {
 		return &pb.LoginResponse{
 			Status: http.StatusUnauthorized,
-			Error:  error.Error(),
+			Error:  err.Error(),
 		}, nil
 	}
 
@@ -62,11 +62,11 @@ func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginRes
 }
 
 func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
-	domainUser, error := s.useCaseValidate.Execute(ctx, s.ToDomainValidate(req))
-	if error != nil {
+	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidate(req))
+	if err != nil {
 		return &pb.ValidateResponse{
 			Status: http.StatusUnauthorized,
-			Error:  error.Error(),
+			Error:  err.Error(),
 		}, nil
 	}
 
