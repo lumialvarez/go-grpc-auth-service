@@ -17,14 +17,13 @@ type Service struct {
 }
 
 func (s *Service) GenerateToken(user *user.User) (signedToken string, err error) {
-	claims := &dto.JwtClaims{
-		Id:    user.Id(),
-		Email: user.Email(),
-		StandardClaims: jwt.StandardClaims{
+	claims := s.Mapper.ToDTO(user)
+
+	claims.StandardClaims =
+		jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(s.ExpirationHours)).Unix(),
 			Issuer:    s.Issuer,
-		},
-	}
+		}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

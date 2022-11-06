@@ -28,6 +28,17 @@ func (repository *Repository) GetByEmail(email string) (*user.User, error) {
 	return domainUser, nil
 }
 
+func (repository *Repository) GetByUserName(username string) (*user.User, error) {
+	var daoUser dao.User
+	result := repository.postgresql.DB.Where(&dao.User{UserName: username}).First(&daoUser)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	domainUser := repository.mapper.ToDomain(&daoUser)
+
+	return domainUser, nil
+}
+
 func (repository *Repository) Save(domainUser *user.User) error {
 	daoUser := repository.mapper.ToDAO(domainUser)
 	result := repository.postgresql.DB.Create(daoUser)

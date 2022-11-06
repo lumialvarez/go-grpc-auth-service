@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
+	GetByUserName(username string) (*user.User, error)
 	Save(user *user.User) error
 }
 
@@ -32,7 +33,7 @@ func (uc UseCaseValidateUser) Execute(ctx context.Context, domainUser *user.User
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}
 
-	dbUser, err := uc.repository.GetByEmail(jwtUser.Email())
+	dbUser, err := uc.repository.GetByUserName(jwtUser.UserName())
 	if err != nil {
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}

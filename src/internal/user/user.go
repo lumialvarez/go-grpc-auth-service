@@ -2,17 +2,35 @@ package user
 
 type User struct {
 	id       int64
+	name     string
+	userName string
 	email    string
 	password string
 	token    string
+	role     Role
 }
 
-func NewUser(id int64, email string, password string, token string) *User {
-	return &User{id: id, email: email, password: password, token: token}
+type Role string
+
+const (
+	RolUser  Role = "rol_user"
+	RolAdmin      = "rol_admin"
+)
+
+func NewUser(id int64, name string, userName string, email string, password string, token string, role Role) *User {
+	return &User{id: id, name: name, userName: userName, email: email, password: password, token: token, role: role}
 }
 
 func (u *User) Id() int64 {
 	return u.id
+}
+
+func (u *User) Name() string {
+	return u.name
+}
+
+func (u *User) UserName() string {
+	return u.userName
 }
 
 func (u *User) Email() string {
@@ -23,12 +41,16 @@ func (u *User) Password() string {
 	return u.password
 }
 
-func (u *User) SetPassword(password string) {
-	u.password = password
-}
-
 func (u *User) Token() string {
 	return u.token
+}
+
+func (u *User) Role() Role {
+	return u.role
+}
+
+func (u *User) SetPassword(password string) {
+	u.password = password
 }
 
 func (u *User) SetToken(token string) {
