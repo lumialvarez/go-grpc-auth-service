@@ -2,30 +2,46 @@ package repositoryUser
 
 import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/dto_borrar"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/dao"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/mapper"
+	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
 
 type Repository struct {
 	postgresql postgresql.Client
-	//mapper Mapper
+	mapper     mapper.Mapper
 }
 
 func Init(config config.Config) Repository {
-	return Repository{postgresql: postgresql.Init(config.DBUrl)}
+	return Repository{postgresql: postgresql.Init(config.DBUrl), mapper: mapper.Mapper{}}
 }
 
-func (repository *Repository) GetByEmail(email string) (*dto_borrar.User, error) {
-	var user dto_borrar.User
-	result := repository.postgresql.DB.Where(&dto_borrar.User{Email: email}).First(&user)
+func (repository *Repository) GetByEmail(email string) (*user.User, error) {
+	var daoUser dao.User
+	result := repository.postgresql.DB.Where(&dao.User{Email: email}).First(&daoUser)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &user, nil
+	domainUser := repository.mapper.ToDomain(&daoUser)
+
+	return domainUser, nil
 }
 
-func (repository *Repository) Save(user *dto_borrar.User) error {
-	result := repository.postgresql.DB.Create(user)
+func (repository *Repository) GetByUserName(username string) (*user.User, error) {
+	var daoUser dao.User
+	result := repository.postgresql.DB.Where(&dao.User{UserName: username}).First(&daoUser)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	domainUser := repository.mapper.ToDomain(&daoUser)
+
+	return domainUser, nil
+}
+
+func (repository *Repository) Save(domainUser *user.User) error {
+	daoUser := repository.mapper.ToDAO(domainUser)
+	result := repository.postgresql.DB.Create(daoUser)
 	if result.Error != nil {
 		return result.Error
 	}

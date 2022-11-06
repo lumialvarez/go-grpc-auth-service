@@ -9,12 +9,13 @@ import (
 
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
+	GetByUserName(username string) (*user.User, error)
 	Save(user *user.User) error
 }
 
 type JwtServiceUser interface {
 	GenerateToken(user *user.User) (signedToken string, err error)
-	ValidateToken(signedToken string) (err error)
+	ValidateToken(signedToken string) (*user.User, error)
 }
 
 type UseCaseLoginUser struct {
@@ -27,15 +28,15 @@ func NewUseCaseLoginUser(repository Repository, jwtService JwtServiceUser) UseCa
 }
 
 func (uc UseCaseLoginUser) Execute(ctx context.Context, domainUser *user.User) (*user.User, error) {
-	dbUser, err := uc.repository.GetByEmail(domainUser.Email())
+	dbUser, err := uc.repository.GetByUserName(domainUser.UserName())
 	if err != nil {
-		return nil, domainError.NewNotFound("User not found")
+		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
 
 	match := utils.CheckPasswordHash(domainUser.Password(), dbUser.Password())
 
 	if !match {
-		return nil, domainError.NewNotFound("User not found")
+		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
 
 	token, _ := uc.jwtService.GenerateToken(dbUser)
