@@ -2,7 +2,7 @@ package login
 
 import (
 	"context"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
+	"github.com/lumialvarez/go-common-tools/hash"
 	domainError "github.com/lumialvarez/go-grpc-auth-service/src/internal/error"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
@@ -33,7 +33,7 @@ func (uc UseCaseLoginUser) Execute(ctx context.Context, domainUser *user.User) (
 		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
 
-	match := utils.CheckPasswordHash(domainUser.Password(), dbUser.Password())
+	match := hash.CheckPasswordHash(domainUser.Password(), dbUser.Password())
 
 	if !match {
 		return nil, domainError.NewInvalidCredentials("Invalid credentials")
