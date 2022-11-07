@@ -2,7 +2,7 @@ package register
 
 import (
 	"context"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/utils"
+	"github.com/lumialvarez/go-common-tools/hash"
 	domainError "github.com/lumialvarez/go-grpc-auth-service/src/internal/error"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
@@ -28,7 +28,7 @@ func NewUseCaseRegisterUser(repository Repository, jwtService JwtServiceUser) Us
 }
 
 func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) error {
-	domainUser.SetPassword(utils.HashPassword(domainUser.Password()))
+	domainUser.SetPassword(hash.HashPassword(domainUser.Password()))
 	_, err := uc.repository.GetByUserName(domainUser.UserName())
 	if err == nil {
 		return domainError.NewAlreadyExists("User Name already exists")
