@@ -33,14 +33,14 @@ func (uc UseCaseValidateUser) Execute(ctx context.Context, domainUser *user.User
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}
 
-	dbUser, err := uc.repository.GetByUserName(jwtUser.UserName())
+	/*dbUser, err := uc.repository.GetByUserName(jwtUser.UserName())
 	if err != nil {
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}
 
 	if dbUser.Id() != jwtUser.Id() {
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
-	}
+	}*/
 
-	return dbUser, nil
+	return jwtUser, nil
 }
