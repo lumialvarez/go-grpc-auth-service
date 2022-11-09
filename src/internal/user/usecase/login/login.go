@@ -40,7 +40,7 @@ func (uc UseCaseLoginUser) Execute(ctx context.Context, domainUser *user.User) (
 	}
 
 	token, _ := uc.jwtService.GenerateToken(dbUser)
-	domainUser.SetToken(token)
+	dbUser.SetToken(token)
 
-	return domainUser, nil
+	return dbUser, nil
 }

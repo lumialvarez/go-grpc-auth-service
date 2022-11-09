@@ -13,8 +13,8 @@ type User struct {
 type Role string
 
 const (
-	RolUser  Role = "rol_user"
-	RolAdmin      = "rol_admin"
+	RolUser  Role = "role_user"
+	RolAdmin      = "role_admin"
 )
 
 func NewUser(id int64, name string, userName string, email string, password string, token string, role Role) *User {

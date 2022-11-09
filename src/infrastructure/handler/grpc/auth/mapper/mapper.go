@@ -9,7 +9,7 @@ type Mapper struct {
 }
 
 func (m Mapper) ToDomainRegister(registerReq *pb.RegisterRequest) *user.User {
-	return user.NewUser(0, registerReq.Name, registerReq.UserName, registerReq.Email, registerReq.Password, "", user.Role(registerReq.Rol))
+	return user.NewUser(0, registerReq.Name, registerReq.UserName, registerReq.Email, registerReq.Password, "", m.ToDomainRole(registerReq.Role))
 }
 
 func (m Mapper) ToDomainLogin(loginReq *pb.LoginRequest) *user.User {
@@ -18,4 +18,12 @@ func (m Mapper) ToDomainLogin(loginReq *pb.LoginRequest) *user.User {
 
 func (m Mapper) ToDomainValidate(validateReq *pb.ValidateRequest) *user.User {
 	return user.NewUser(0, "", "", "", "", validateReq.Token, "")
+}
+
+func (m Mapper) ToDomainRole(dtoRole string) user.Role {
+	return user.Role(dtoRole)
+}
+
+func (m Mapper) ToDTORole(domainRole user.Role) string {
+	return string(domainRole)
 }

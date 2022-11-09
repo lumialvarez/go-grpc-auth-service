@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	"net/http"
 )
@@ -33,7 +35,24 @@ func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useC
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	err := s.useCaseRegister.Execute(ctx, s.ToDomainRegister(req))
+	domainUser := s.ToDomainRegister(req)
+
+	err := passwordvalidator.Validate(req.Password, 80)
+	if err != nil {
+		return &pb.RegisterResponse{
+			Status: http.StatusBadRequest,
+			Error:  "Invalid Password (" + err.Error() + ")",
+		}, nil
+	}
+
+	if len(domainUser.UserName()) <= 2 || domainUser.Role() == "" || !validations.ValidEmail(req.Email) {
+		return &pb.RegisterResponse{
+			Status: http.StatusBadRequest,
+			Error:  "Bad request",
+		}, nil
+	}
+
+	err = s.useCaseRegister.Execute(ctx, domainUser)
 	if err != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusUnauthorized,
@@ -44,6 +63,8 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 	return &pb.RegisterResponse{
 		Status: http.StatusCreated,
 	}, nil
+
+	//return nil, status.Error(codes.PermissionDenied, "PERMISSION_DENIED_TEXT")
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
@@ -55,9 +76,14 @@ func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginRes
 		}, nil
 	}
 
+	role := s.Mapper.ToDTORole(domainUser.Role())
+
 	return &pb.LoginResponse{
-		Status: http.StatusOK,
-		Token:  domainUser.Token(),
+		Status:   http.StatusOK,
+		Token:    domainUser.Token(),
+		UserId:   domainUser.Id(),
+		UserName: domainUser.UserName(),
+		Role:     role,
 	}, nil
 }
 
@@ -71,7 +97,9 @@ func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Va
 	}
 
 	return &pb.ValidateResponse{
-		Status: http.StatusOK,
-		UserId: domainUser.Id(),
+		Status:   http.StatusOK,
+		UserId:   domainUser.Id(),
+		UserName: domainUser.UserName(),
+		Role:     s.Mapper.ToDTORole(domainUser.Role()),
 	}, nil
 }
