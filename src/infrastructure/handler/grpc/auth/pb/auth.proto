@@ -21,8 +21,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  int64   status = 1;
-  string  error = 2;
+  int64 userId = 1;
 }
 
 // Login
@@ -33,22 +32,20 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  int64   status = 1;
-  string  error = 2;
-  string  token = 3;
-  int64   userId = 4;
-  string  userName = 5;
-  string  role = 6;
+  string  token = 1;
+  int64   userId = 2;
+  string  userName = 3;
+  string  role = 4;
 }
 
 // Validate
 
-message ValidateRequest { string token = 1; }
+message ValidateRequest {
+  string token = 1;
+}
 
 message ValidateResponse {
-  int64   status = 1;
-  string  error = 2;
-  int64   userId = 3;
-  string  userName = 4;
-  string  role = 5;
+  int64   userId = 1;
+  string  userName = 2;
+  string  role = 3;
 }

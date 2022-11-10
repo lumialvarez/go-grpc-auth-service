@@ -9,7 +9,7 @@ import (
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
 	GetByUserName(username string) (*user.User, error)
-	Save(user *user.User) error
+	Save(user *user.User) (*user.User, error)
 }
 
 type JwtServiceUser interface {

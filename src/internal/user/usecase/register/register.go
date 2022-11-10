@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
 	GetByUserName(username string) (*user.User, error)
-	Save(user *user.User) error
+	Save(user *user.User) (*user.User, error)
 }
 
 type JwtServiceUser interface {
@@ -27,17 +27,17 @@ func NewUseCaseRegisterUser(repository Repository, jwtService JwtServiceUser) Us
 	return UseCaseRegisterUser{repository: repository, jwtService: jwtService}
 }
 
-func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) error {
+func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) (*user.User, error) {
 	domainUser.SetPassword(hash.HashPassword(domainUser.Password()))
 	_, err := uc.repository.GetByUserName(domainUser.UserName())
 	if err == nil {
-		return domainError.NewAlreadyExists("User Name already exists")
+		return nil, domainError.NewAlreadyExists("User Name already exists")
 	}
 
-	err = uc.repository.Save(domainUser)
+	createdUser, err := uc.repository.Save(domainUser)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return createdUser, nil
 }

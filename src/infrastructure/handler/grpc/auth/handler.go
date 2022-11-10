@@ -7,11 +7,12 @@ import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
-	"net/http"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UseCaseRegister interface {
-	Execute(ctx context.Context, domainUser *user.User) error
+	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
 type UseCaseLogin interface {
@@ -35,71 +36,39 @@ func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useC
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	domainUser := s.ToDomainRegister(req)
+	domainUser := s.ToDomainRegisterRequest(req)
 
 	err := passwordvalidator.Validate(req.Password, 80)
 	if err != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusBadRequest,
-			Error:  "Invalid Password (" + err.Error() + ")",
-		}, nil
+		return nil, status.Error(codes.InvalidArgument, "Invalid Password ("+err.Error()+")")
 	}
 
 	if len(domainUser.UserName()) <= 2 || domainUser.Role() == "" || !validations.ValidEmail(req.Email) {
-		return &pb.RegisterResponse{
-			Status: http.StatusBadRequest,
-			Error:  "Bad request",
-		}, nil
+		return nil, status.Error(codes.InvalidArgument, "Bad request")
 	}
 
-	err = s.useCaseRegister.Execute(ctx, domainUser)
+	userCreated, err := s.useCaseRegister.Execute(ctx, domainUser)
 	if err != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	return &pb.RegisterResponse{
-		Status: http.StatusCreated,
-	}, nil
-
-	//return nil, status.Error(codes.PermissionDenied, "PERMISSION_DENIED_TEXT")
+	return s.ToDTORegisterResponse(userCreated), nil
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLogin(req))
+	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLoginRequest(req))
 	if err != nil {
-		return &pb.LoginResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	role := s.Mapper.ToDTORole(domainUser.Role())
-
-	return &pb.LoginResponse{
-		Status:   http.StatusOK,
-		Token:    domainUser.Token(),
-		UserId:   domainUser.Id(),
-		UserName: domainUser.UserName(),
-		Role:     role,
-	}, nil
+	return s.ToDTOLoginResponse(domainUser), nil
 }
 
 func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
-	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidate(req))
+	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidateRequest(req))
 	if err != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	return &pb.ValidateResponse{
-		Status:   http.StatusOK,
-		UserId:   domainUser.Id(),
-		UserName: domainUser.UserName(),
-		Role:     s.Mapper.ToDTORole(domainUser.Role()),
-	}, nil
+	return s.ToDTOValidateResponse(domainUser), nil
 }
