@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
 	GetByUserName(username string) (*user.User, error)
-	Save(user *user.User) error
+	Save(user *user.User) (*user.User, error)
 }
 
 type JwtServiceUser interface {
@@ -40,7 +40,7 @@ func (uc UseCaseLoginUser) Execute(ctx context.Context, domainUser *user.User) (
 	}
 
 	token, _ := uc.jwtService.GenerateToken(dbUser)
-	domainUser.SetToken(token)
+	dbUser.SetToken(token)
 
-	return domainUser, nil
+	return dbUser, nil
 }

@@ -9,7 +9,7 @@ import (
 type Repository interface {
 	GetByEmail(email string) (*user.User, error)
 	GetByUserName(username string) (*user.User, error)
-	Save(user *user.User) error
+	Save(user *user.User) (*user.User, error)
 }
 
 type JwtServiceUser interface {
@@ -33,14 +33,14 @@ func (uc UseCaseValidateUser) Execute(ctx context.Context, domainUser *user.User
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}
 
-	dbUser, err := uc.repository.GetByUserName(jwtUser.UserName())
+	/*dbUser, err := uc.repository.GetByUserName(jwtUser.UserName())
 	if err != nil {
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
 	}
 
 	if dbUser.Id() != jwtUser.Id() {
 		return nil, domainError.NewInvalidCredentials("Invalid Token")
-	}
+	}*/
 
-	return dbUser, nil
+	return jwtUser, nil
 }

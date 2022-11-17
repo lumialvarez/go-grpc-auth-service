@@ -2,14 +2,17 @@ package auth
 
 import (
 	"context"
+	"github.com/lumialvarez/go-common-tools/validations"
+	"github.com/lumialvarez/go-common-tools/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
-	"net/http"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UseCaseRegister interface {
-	Execute(ctx context.Context, domainUser *user.User) error
+	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
 type UseCaseLogin interface {
@@ -20,58 +23,57 @@ type UseCaseValidate interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
+type ApiResponseProvider interface {
+	ToAPIResponse(err error) error
+}
+
 type Handler struct {
-	useCaseRegister UseCaseRegister
-	useCaseLogin    UseCaseLogin
-	useCaseValidate UseCaseValidate
+	useCaseRegister     UseCaseRegister
+	useCaseLogin        UseCaseLogin
+	useCaseValidate     UseCaseValidate
+	apiResponseProvider ApiResponseProvider
 	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, apiResponseProvider ApiResponseProvider) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, apiResponseProvider: apiResponseProvider}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	err := s.useCaseRegister.Execute(ctx, s.ToDomainRegister(req))
+	domainUser := s.ToDomainRegisterRequest(req)
+
+	err := passwordvalidator.Validate(req.Password, 80)
 	if err != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, status.Error(codes.InvalidArgument, "Invalid Password ("+err.Error()+")")
 	}
 
-	return &pb.RegisterResponse{
-		Status: http.StatusCreated,
-	}, nil
+	if len(domainUser.UserName()) <= 2 || domainUser.Role() == "" || !validations.ValidEmail(req.Email) {
+		return nil, status.Error(codes.InvalidArgument, "Bad request")
+	}
+
+	userCreated, err := s.useCaseRegister.Execute(ctx, domainUser)
+	if err != nil {
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
+	}
+
+	return s.ToDTORegisterResponse(userCreated), nil
 }
 
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLogin(req))
+	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLoginRequest(req))
 	if err != nil {
-		return &pb.LoginResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}
 
-	return &pb.LoginResponse{
-		Status: http.StatusOK,
-		Token:  domainUser.Token(),
-	}, nil
+	return s.ToDTOLoginResponse(domainUser), nil
 }
 
 func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
-	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidate(req))
+	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidateRequest(req))
 	if err != nil {
-		return &pb.ValidateResponse{
-			Status: http.StatusUnauthorized,
-			Error:  err.Error(),
-		}, nil
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}
 
-	return &pb.ValidateResponse{
-		Status: http.StatusOK,
-		UserId: domainUser.Id(),
-	}, nil
+	return s.ToDTOValidateResponse(domainUser), nil
 }

@@ -39,11 +39,13 @@ func (repository *Repository) GetByUserName(username string) (*user.User, error)
 	return domainUser, nil
 }
 
-func (repository *Repository) Save(domainUser *user.User) error {
+func (repository *Repository) Save(domainUser *user.User) (*user.User, error) {
 	daoUser := repository.mapper.ToDAO(domainUser)
-	result := repository.postgresql.DB.Create(daoUser)
+	result := repository.postgresql.DB.Create(&daoUser)
 	if result.Error != nil {
-		return result.Error
+		return nil, result.Error
 	}
-	return nil
+	domainUser = repository.mapper.ToDomain(daoUser)
+
+	return domainUser, nil
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
+	errorGrpc "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/error"
 	repositoryUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	serviceJwtUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/login"
@@ -27,12 +28,13 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	userCaseRegister := register.NewUseCaseRegisterUser(&userRepository, &jwtService)
 	useCaseLogin := login.NewUseCaseLoginUser(&userRepository, &jwtService)
 	useCaseValidate := validate.NewUseCaseValidateUser(&userRepository, &jwtService)
+	apiResponseProvider := errorGrpc.NewAPIResponseProvider()
 
 	/*s := auth.Handler{
 		Repository: userRepository,
 		Jwt:        jwt,
 	}*/
-	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate)
+	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate, apiResponseProvider)
 
 	return DependenciesContainer{
 		AuthService: &s,
