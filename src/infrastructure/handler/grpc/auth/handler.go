@@ -23,16 +23,21 @@ type UseCaseValidate interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
+type ApiResponseProvider interface {
+	ToAPIResponse(err error) error
+}
+
 type Handler struct {
-	useCaseRegister UseCaseRegister
-	useCaseLogin    UseCaseLogin
-	useCaseValidate UseCaseValidate
+	useCaseRegister     UseCaseRegister
+	useCaseLogin        UseCaseLogin
+	useCaseValidate     UseCaseValidate
+	apiResponseProvider ApiResponseProvider
 	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, apiResponseProvider ApiResponseProvider) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, apiResponseProvider: apiResponseProvider}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
@@ -49,7 +54,7 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 
 	userCreated, err := s.useCaseRegister.Execute(ctx, domainUser)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}
 
 	return s.ToDTORegisterResponse(userCreated), nil
@@ -58,7 +63,7 @@ func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Re
 func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	domainUser, err := s.useCaseLogin.Execute(ctx, s.ToDomainLoginRequest(req))
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}
 
 	return s.ToDTOLoginResponse(domainUser), nil
@@ -67,7 +72,7 @@ func (s *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginRes
 func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 	domainUser, err := s.useCaseValidate.Execute(ctx, s.ToDomainValidateRequest(req))
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}
 
 	return s.ToDTOValidateResponse(domainUser), nil
