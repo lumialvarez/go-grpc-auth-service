@@ -2,10 +2,10 @@ package auth
 
 import (
 	"context"
+	"github.com/lumialvarez/go-common-tools/validations"
+	"github.com/lumialvarez/go-common-tools/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/tmp_utils/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
