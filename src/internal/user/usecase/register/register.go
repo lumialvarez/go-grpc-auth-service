@@ -13,18 +13,12 @@ type Repository interface {
 	Save(user *user.User) (*user.User, error)
 }
 
-type JwtServiceUser interface {
-	GenerateToken(user *user.User) (signedToken string, err error)
-	ValidateToken(signedToken string) (*user.User, error)
-}
-
 type UseCaseRegisterUser struct {
 	repository Repository
-	jwtService JwtServiceUser
 }
 
-func NewUseCaseRegisterUser(repository Repository, jwtService JwtServiceUser) UseCaseRegisterUser {
-	return UseCaseRegisterUser{repository: repository, jwtService: jwtService}
+func NewUseCaseRegisterUser(repository Repository) UseCaseRegisterUser {
+	return UseCaseRegisterUser{repository: repository}
 }
 
 func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) (*user.User, error) {

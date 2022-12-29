@@ -9,7 +9,7 @@ type Mapper struct {
 }
 
 func (m Mapper) ToDomain(daoUser *dao.User) *user.User {
-	return user.NewUser(daoUser.Id, daoUser.Name, daoUser.UserName, daoUser.Email, daoUser.Password, "", user.Role(daoUser.Rol))
+	return user.NewUser(daoUser.Id, daoUser.Name, daoUser.UserName, daoUser.Email, daoUser.Password, "", user.Role(daoUser.Rol), daoUser.Status)
 }
 
 func (m Mapper) ToDAO(domainUser *user.User) *dao.User {
@@ -20,6 +20,7 @@ func (m Mapper) ToDAO(domainUser *user.User) *dao.User {
 		Email:    domainUser.Email(),
 		Password: domainUser.Password(),
 		Rol:      string(domainUser.Role()),
+		Status:   domainUser.Status(),
 	}
 	return &daoUser
 }

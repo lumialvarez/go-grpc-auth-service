@@ -23,6 +23,14 @@ type UseCaseValidate interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
+type UseCaseList interface {
+	Execute(ctx context.Context) (*[]user.User, error)
+}
+
+type UseCaseUpdate interface {
+	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
+}
+
 type ApiResponseProvider interface {
 	ToAPIResponse(err error) error
 }
@@ -31,13 +39,15 @@ type Handler struct {
 	useCaseRegister     UseCaseRegister
 	useCaseLogin        UseCaseLogin
 	useCaseValidate     UseCaseValidate
+	useCaseList         UseCaseList
+	useCaseUpdate       UseCaseUpdate
 	apiResponseProvider ApiResponseProvider
 	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, apiResponseProvider ApiResponseProvider) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, apiResponseProvider: apiResponseProvider}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, useCaseList UseCaseList, useCaseUpdate UseCaseUpdate, apiResponseProvider ApiResponseProvider) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, useCaseList: useCaseList, useCaseUpdate: useCaseUpdate, apiResponseProvider: apiResponseProvider}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
@@ -76,4 +86,23 @@ func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Va
 	}
 
 	return s.ToDTOValidateResponse(domainUser), nil
+}
+
+func (s *Handler) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+	domainUsers, err := s.useCaseList.Execute(ctx)
+	if err != nil {
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
+	}
+
+	return s.ToDTOListResponse(domainUsers), nil
+}
+
+func (s *Handler) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.UpdateResponse, error) {
+	domainUser := s.ToDomainUpdateRequest(req)
+	domainUser, err := s.useCaseUpdate.Execute(ctx, domainUser)
+	if err != nil {
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
+	}
+
+	return &pb.UpdateResponse{}, nil
 }

@@ -8,6 +8,7 @@ type User struct {
 	password string
 	token    string
 	role     Role
+	status   bool
 }
 
 type Role string
@@ -17,8 +18,8 @@ const (
 	RolAdmin      = "role_admin"
 )
 
-func NewUser(id int64, name string, userName string, email string, password string, token string, role Role) *User {
-	return &User{id: id, name: name, userName: userName, email: email, password: password, token: token, role: role}
+func NewUser(id int64, name string, userName string, email string, password string, token string, role Role, status bool) *User {
+	return &User{id: id, name: name, userName: userName, email: email, password: password, token: token, role: role, status: status}
 }
 
 func (u *User) Id() int64 {
@@ -55,4 +56,12 @@ func (u *User) SetPassword(password string) {
 
 func (u *User) SetToken(token string) {
 	u.token = token
+}
+
+func (u *User) Status() bool {
+	return u.status
+}
+
+func (u *User) SetStatus(status bool) {
+	u.status = status
 }

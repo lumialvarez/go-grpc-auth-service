@@ -38,6 +38,10 @@ func (uc UseCaseLoginUser) Execute(ctx context.Context, domainUser *user.User) (
 	if !match {
 		return nil, domainError.NewInvalidCredentials("Invalid credentials")
 	}
+	
+	if !dbUser.Status() {
+		return nil, domainError.NewInactive("User Inactive")
+	}
 
 	token, _ := uc.jwtService.GenerateToken(dbUser)
 	dbUser.SetToken(token)
