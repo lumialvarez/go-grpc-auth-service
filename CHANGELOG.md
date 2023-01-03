@@ -1,9 +1,14 @@
 # Changelog
-API Gateway
+Authorization Service
 
 ## [Unreleased]
 
-## [1.0.0] - 07/11/2022
+
+## [0.0.6] - 03/01/2023
+### Fixed
+- Just for test, DELETE!!
+
+## [1.0.0] - 03/01/2023
 ### Added
 - gRPC for login, register, validate, update and list
 - Use go-common-tools library

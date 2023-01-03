@@ -7,7 +7,7 @@ pipeline {
    environment {
       SSH_MAIN_SERVER = credentials("SSH_MAIN_SERVER")
 
-      DATASOURCE_URL_CLEARED = credentials("DATASOURCE_URL_CLEARED")
+      DATASOURCE_URL_CLEARED = credentials("DATASOURCE_DOCKER_URL_CLEARED")
       DATASOURCE_USERNAME = credentials("DATASOURCE_USERNAME")
       DATASOURCE_PASSWORD = credentials("DATASOURCE_PASSWORD")
 
@@ -69,6 +69,18 @@ pipeline {
 
             sh "docker run --name go-grpc-auth-service --net=backend-services --add-host=lmalvarez.com:${INTERNAL_IP} -p 50051:50051 -e SCOPE='prod' -d --restart unless-stopped lmalvarez/go-grpc-auth-service:${APP_VERSION}"
          }
+      }
+      stage('GIT tag') {
+          steps {
+              git branch: 'main', credentialsId: 'git-token-lumi', url: 'https://github.com/lumialvarez/go-grpc-auth-service.git'
+
+              withCredentials([usernamePassword(credentialsId: 'git-token-lumi', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                  sh "git config credential.username $USERNAME"
+                  sh "git remote set-url --push origin https://$PASSWORD@github.com/lumialvarez/go-grpc-auth-service.git"
+                  sh "git tag v" + APP_VERSION + "  HEAD"
+                  sh "git push origin --tags"
+              }
+          }
       }
       stage('Push') {
             steps {
