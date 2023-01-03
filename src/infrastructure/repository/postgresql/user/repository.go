@@ -17,6 +17,17 @@ func Init(config config.Config) Repository {
 	return Repository{postgresql: postgresql.Init(config.DBUrl), mapper: mapper.Mapper{}}
 }
 
+func (repository *Repository) GetById(id int64) (*user.User, error) {
+	var daoUser dao.User
+	result := repository.postgresql.DB.Where(&dao.User{Id: id}).First(&daoUser)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	domainUser := repository.mapper.ToDomain(&daoUser)
+
+	return domainUser, nil
+}
+
 func (repository *Repository) GetByEmail(email string) (*user.User, error) {
 	var daoUser dao.User
 	result := repository.postgresql.DB.Where(&dao.User{Email: email}).First(&daoUser)

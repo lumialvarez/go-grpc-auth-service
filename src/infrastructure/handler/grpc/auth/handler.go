@@ -24,7 +24,7 @@ type UseCaseValidate interface {
 }
 
 type UseCaseList interface {
-	Execute(ctx context.Context) (*[]user.User, error)
+	Execute(ctx context.Context, id int64, userName string) (*[]user.User, error)
 }
 
 type UseCaseUpdate interface {
@@ -89,7 +89,7 @@ func (s *Handler) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Va
 }
 
 func (s *Handler) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	domainUsers, err := s.useCaseList.Execute(ctx)
+	domainUsers, err := s.useCaseList.Execute(ctx, req.GetUserId(), req.GetUserName())
 	if err != nil {
 		return nil, s.apiResponseProvider.ToAPIResponse(err)
 	}

@@ -44,7 +44,7 @@ func (m Mapper) ToDTOValidateResponse(domainUser *user.User) *pb.ValidateRespons
 func (m Mapper) ToDTOListResponse(domainUsers *[]user.User) *pb.ListResponse {
 	var dto pb.ListResponse
 	for _, domainUser := range *domainUsers {
-		tmp := pb.User{
+		tmp := pb.ListResponse_UserList{
 			UserId:   domainUser.Id(),
 			Name:     domainUser.Name(),
 			UserName: domainUser.UserName(),
