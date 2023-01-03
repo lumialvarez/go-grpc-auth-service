@@ -24,8 +24,8 @@ RUN go install -v ./...
 # Build the Go app
 RUN go build -o /build src/cmd/main.go
 
-# Expose port 8080 to the outside world
-EXPOSE 9191
+# Expose port 50051 to the outside world
+EXPOSE 50051
 
 # Run the executable
 CMD [ "/build" ]

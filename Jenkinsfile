@@ -10,6 +10,7 @@ pipeline {
       DATASOURCE_URL_CLEARED = credentials("DATASOURCE_DOCKER_URL_CLEARED")
       DATASOURCE_USERNAME = credentials("DATASOURCE_USERNAME")
       DATASOURCE_PASSWORD = credentials("DATASOURCE_PASSWORD")
+      JWT_SECRET = credentials("JWT_SECRET")
 
       DOCKERHUB_CREDENTIALS=credentials('dockerhub-lmalvarez')
    }
@@ -48,6 +49,7 @@ pipeline {
                 sh 'java ReplaceSecrets.java DATASOURCE_URL_CLEARED $DATASOURCE_URL_CLEARED'
                 sh 'java ReplaceSecrets.java DATASOURCE_USERNAME $DATASOURCE_USERNAME'
                 sh 'java ReplaceSecrets.java DATASOURCE_PASSWORD $DATASOURCE_PASSWORD'
+                sh 'java ReplaceSecrets.java JWT_SECRET $JWT_SECRET'
                 sh 'cat src/cmd/devapi/config/envs/prod.env'
 
                 sh "docker build . -t lmalvarez/go-grpc-auth-service:${APP_VERSION}"
