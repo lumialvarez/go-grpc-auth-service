@@ -9,7 +9,7 @@ type Mapper struct {
 }
 
 func (m Mapper) ToDomainRegisterRequest(registerReq *pb.RegisterRequest) *user.User {
-	return user.NewUser(0, registerReq.Name, registerReq.UserName, registerReq.Email, registerReq.Password, "", m.toDomainRole(registerReq.Role))
+	return user.NewUser(0, registerReq.Name, registerReq.UserName, registerReq.Email, registerReq.Password, "", m.toDomainRole(registerReq.Role), true)
 }
 
 func (m Mapper) ToDTORegisterResponse(domainUser *user.User) *pb.RegisterResponse {
@@ -17,7 +17,7 @@ func (m Mapper) ToDTORegisterResponse(domainUser *user.User) *pb.RegisterRespons
 }
 
 func (m Mapper) ToDomainLoginRequest(loginReq *pb.LoginRequest) *user.User {
-	return user.NewUser(0, "", loginReq.UserName, "", loginReq.Password, "", "")
+	return user.NewUser(0, "", loginReq.UserName, "", loginReq.Password, "", "", true)
 }
 
 func (m Mapper) ToDTOLoginResponse(domainUser *user.User) *pb.LoginResponse {
@@ -30,7 +30,7 @@ func (m Mapper) ToDTOLoginResponse(domainUser *user.User) *pb.LoginResponse {
 }
 
 func (m Mapper) ToDomainValidateRequest(validateReq *pb.ValidateRequest) *user.User {
-	return user.NewUser(0, "", "", "", "", validateReq.Token, "")
+	return user.NewUser(0, "", "", "", "", validateReq.Token, "", true)
 }
 
 func (m Mapper) ToDTOValidateResponse(domainUser *user.User) *pb.ValidateResponse {
@@ -39,6 +39,27 @@ func (m Mapper) ToDTOValidateResponse(domainUser *user.User) *pb.ValidateRespons
 		UserName: domainUser.UserName(),
 		Role:     m.toDTORole(domainUser.Role()),
 	}
+}
+
+func (m Mapper) ToDTOListResponse(domainUsers *[]user.User) *pb.ListResponse {
+	var dto pb.ListResponse
+	for _, domainUser := range *domainUsers {
+		tmp := pb.ListResponse_UserList{
+			UserId:   domainUser.Id(),
+			Name:     domainUser.Name(),
+			UserName: domainUser.UserName(),
+			Email:    domainUser.Email(),
+			Role:     m.toDTORole(domainUser.Role()),
+			Status:   domainUser.Status(),
+		}
+		dto.Users = append(dto.Users, &tmp)
+	}
+	return &dto
+}
+
+func (m Mapper) ToDomainUpdateRequest(updateReq *pb.UpdateRequest) *user.User {
+	dto := updateReq.User
+	return user.NewUser(dto.UserId, dto.Name, dto.UserName, dto.Email, dto.Password, "", m.toDomainRole(dto.Role), dto.Status)
 }
 
 func (m Mapper) toDomainRole(dtoRole string) user.Role {

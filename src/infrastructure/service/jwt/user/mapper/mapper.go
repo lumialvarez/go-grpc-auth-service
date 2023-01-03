@@ -9,7 +9,7 @@ type Mapper struct {
 }
 
 func (m Mapper) ToDomain(jwtClaims *dto.JwtClaims) *user.User {
-	return user.NewUser(jwtClaims.Id, "", jwtClaims.UserName, "", "", "", user.Role(jwtClaims.Rol))
+	return user.NewUser(jwtClaims.Id, "", jwtClaims.UserName, "", "", "", user.Role(jwtClaims.Rol), true)
 }
 
 func (m Mapper) ToDTO(domainUser *user.User) *dto.JwtClaims {

@@ -7,4 +7,5 @@ type User struct {
 	Email    string
 	Password string
 	Rol      string
+	Status   bool
 }

@@ -8,10 +8,11 @@ service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse) {}
   rpc Login(LoginRequest) returns (LoginResponse) {}
   rpc Validate(ValidateRequest) returns (ValidateResponse) {}
+  rpc List(ListRequest) returns (ListResponse) {}
+  rpc Update(UpdateRequest) returns (UpdateResponse) {}
 }
 
 // Register
-
 message RegisterRequest {
   string  name = 1;
   string  userName = 2;
@@ -25,7 +26,6 @@ message RegisterResponse {
 }
 
 // Login
-
 message LoginRequest {
   string  userName = 1;
   string  password = 2;
@@ -39,7 +39,6 @@ message LoginResponse {
 }
 
 // Validate
-
 message ValidateRequest {
   string token = 1;
 }
@@ -48,4 +47,39 @@ message ValidateResponse {
   int64   userId = 1;
   string  userName = 2;
   string  role = 3;
+}
+
+// List
+message ListRequest {
+  optional int64  userId = 1;
+  optional string userName = 2;
+}
+
+message ListResponse {
+  message UserList {
+    int64   userId = 1;
+    string  name = 2;
+    string  userName = 3;
+    string  email = 4;
+    string  role = 5;
+    bool    status = 6;
+  }
+  repeated UserList users = 1;
+}
+
+// Update
+message UpdateRequest {
+  message UserUpdate {
+    int64   userId = 1;
+    string  name = 2;
+    string  userName = 3;
+    string  email = 4;
+    string  password = 5;
+    string  role = 6;
+    bool    status = 7;
+  }
+  UserUpdate user = 1;
+}
+
+message UpdateResponse {
 }
