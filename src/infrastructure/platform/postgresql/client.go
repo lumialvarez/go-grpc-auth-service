@@ -19,6 +19,8 @@ func Init(url string) Client {
 		log.Fatalln(err)
 	}
 
+	log.Print("Connected to " + url)
+
 	db.AutoMigrate(dao.User{})
 
 	return Client{db}

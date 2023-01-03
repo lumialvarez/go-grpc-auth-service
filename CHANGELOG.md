@@ -4,7 +4,7 @@ Authorization Service
 ## [Unreleased]
 
 
-## [0.0.7] - 03/01/2023
+## [0.0.8] - 03/01/2023
 ### Fixed
 - Just for test, DELETE!!
 
