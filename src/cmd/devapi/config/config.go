@@ -1,6 +1,10 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+	"log"
+	"os"
+)
 
 //goland:noinspection SpellCheckingInspection
 type Config struct {
@@ -12,7 +16,14 @@ type Config struct {
 //goland:noinspection SpellCheckingInspection
 func LoadConfig() (config Config, err error) {
 	viper.AddConfigPath("./src/cmd/devapi/config/envs")
-	viper.SetConfigName("dev")
+
+	scope := os.Getenv("SCOPE")
+	log.Print("OS scope configuration:", scope)
+	if len(scope) == 0 {
+		scope = "dev"
+	}
+	log.Print("Selected configuration:", scope)
+	viper.SetConfigName(scope)
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
