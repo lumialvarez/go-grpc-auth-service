@@ -46,32 +46,12 @@ pipeline {
       }
       stage('Build') {
             steps {
-                sh 'java ReplaceSecrets.java DATASOURCE_URL_CLEARED $DATASOURCE_URL_CLEARED'
-                sh 'java ReplaceSecrets.java DATASOURCE_USERNAME $DATASOURCE_USERNAME'
-                sh 'java ReplaceSecrets.java DATASOURCE_PASSWORD $DATASOURCE_PASSWORD'
-                sh 'java ReplaceSecrets.java JWT_SECRET $JWT_SECRET'
+                sh "python replace-variables.py ${WORKSPACE}/src/cmd/devapi/config/envs/prod.env DATASOURCE_URL_CLEARED=${DATASOURCE_URL_CLEARED} DATASOURCE_USERNAME=${DATASOURCE_USERNAME} DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD} JWT_SECRET=${JWT_SECRET}"
                 sh 'cat src/cmd/devapi/config/envs/prod.env'
 
                 sh "docker build . -t lmalvarez/go-grpc-auth-service:${APP_VERSION}"
             }
         }
-      stage('Deploy') {
-         steps {
-             //script_internal_ip.sh -> ip route | awk '/docker0 /{print $9}'
-                script {
-                    INTERNAL_IP = sh (
-                        script: '''ssh ${SSH_MAIN_SERVER} 'sudo bash script_internal_ip.sh' ''',
-                        returnStdout: true
-                    ).trim()
-                }
-
-                sh "docker rm -f go-grpc-auth-service &>/dev/null && echo \'Removed old container\' "
-
-                sh "sleep 5s"
-
-            sh "docker run --name go-grpc-auth-service --net=backend-services --add-host=lmalvarez.com:${INTERNAL_IP} -p 50051:50051 -e SCOPE='prod' -d --restart unless-stopped lmalvarez/go-grpc-auth-service:${APP_VERSION}"
-         }
-      }
       stage('GIT tag') {
           steps {
               git branch: 'main', credentialsId: 'git-token-lumi', url: 'https://github.com/lumialvarez/go-grpc-auth-service.git'

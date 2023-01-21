@@ -3,6 +3,11 @@ Authorization Service
 
 ## [Unreleased]
 
+## [1.0.2] - 20/01/2023
+### Fixed
+- Remove Deploy Stage
+- Change ReplaceSecrets.java to replace-variables.py
+
 ## [1.0.1] - 03/01/2023
 ### Fixed
 - Configuration load by scope
