@@ -1,7 +1,9 @@
 package devapi
 
 import (
+	notificationPublisher "github.com/lumialvarez/go-common-tools/service/rabbitmq/notification"
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/consumers/notification"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
 	errorGrpc "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/error"
@@ -22,6 +24,7 @@ type DependenciesContainer struct {
 
 func LoadDependencies(config config.Config) DependenciesContainer {
 	userRepository := repositoryUser.Init(config)
+	publishNotificationService := notificationPublisher.Init()
 
 	jwtService := serviceJwtUser.Service{
 		SecretKey:       config.JWTSecretKey,
@@ -30,7 +33,7 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	}
 
 	userCaseRegister := register.NewUseCaseRegisterUser(&userRepository)
-	useCaseLogin := login.NewUseCaseLoginUser(&userRepository, &jwtService)
+	useCaseLogin := login.NewUseCaseLoginUser(&userRepository, &jwtService, &publishNotificationService)
 	useCaseValidate := validate.NewUseCaseValidateUser(&userRepository, &jwtService)
 	useCaseList := list.NewUseCaseListUser(&userRepository)
 	useCaseUpdate := update.NewUseCaseUpdateUser(&userRepository)
@@ -39,6 +42,11 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	apiResponseProvider := errorGrpc.NewAPIResponseProvider()
 
 	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate, useCaseList, useCaseUpdate, useCaseCurrent, useCaseReadNotification, apiResponseProvider)
+
+	notificationConsumer := notification.Consumer{}
+	go func() {
+		notificationConsumer.Init()
+	}()
 
 	return DependenciesContainer{
 		AuthService: &s,

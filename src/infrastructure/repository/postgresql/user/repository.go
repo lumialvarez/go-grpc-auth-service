@@ -1,8 +1,8 @@
 package repositoryUser
 
 import (
+	"github.com/lumialvarez/go-common-tools/platform/postgresql"
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/dao"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
