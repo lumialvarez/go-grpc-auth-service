@@ -7,7 +7,9 @@ import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"strings"
 )
 
 type UseCaseRegister interface {
@@ -30,6 +32,10 @@ type UseCaseUpdate interface {
 	Execute(ctx context.Context, domainUser *user.User) (*user.User, error)
 }
 
+type UseCaseCurrent interface {
+	Execute(ctx context.Context, token string) (*user.User, error)
+}
+
 type ApiResponseProvider interface {
 	ToAPIResponse(err error) error
 }
@@ -40,13 +46,14 @@ type Handler struct {
 	useCaseValidate     UseCaseValidate
 	useCaseList         UseCaseList
 	useCaseUpdate       UseCaseUpdate
+	useCaseCurrent      UseCaseCurrent
 	apiResponseProvider ApiResponseProvider
 	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, useCaseList UseCaseList, useCaseUpdate UseCaseUpdate, apiResponseProvider ApiResponseProvider) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, useCaseList: useCaseList, useCaseUpdate: useCaseUpdate, apiResponseProvider: apiResponseProvider}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, useCaseList UseCaseList, useCaseUpdate UseCaseUpdate, useCaseCurrent UseCaseCurrent, apiResponseProvider ApiResponseProvider) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, useCaseList: useCaseList, useCaseUpdate: useCaseUpdate, useCaseCurrent: useCaseCurrent, apiResponseProvider: apiResponseProvider}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
@@ -99,4 +106,34 @@ func (s *Handler) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.Update
 	}
 
 	return &pb.UpdateResponse{}, nil
+}
+
+func (s *Handler) Current(ctx context.Context, req *pb.CurrentRequest) (*pb.CurrentResponse, error) {
+	var token string
+	md, _ := metadata.FromIncomingContext(ctx)
+	authKeys := md.Get("authorization")
+
+	if len(authKeys) == 0 {
+		return nil, status.Error(codes.Unauthenticated, "authorization Metadata not found")
+	}
+	authorization := authKeys[0]
+
+	piecesToken := strings.Split(authorization, "Bearer ")
+
+	if len(piecesToken) < 2 {
+		return nil, status.Error(codes.Unauthenticated, "Invalid authorization Metadata")
+	}
+
+	token = piecesToken[1]
+
+	println(token)
+
+	domainUser, err := s.useCaseCurrent.Execute(ctx, token)
+	if err != nil {
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
+	}
+
+	println(domainUser)
+
+	return s.ToDTOCurrentResponse(domainUser), nil
 }

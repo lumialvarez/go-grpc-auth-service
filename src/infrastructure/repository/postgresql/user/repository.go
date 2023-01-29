@@ -14,12 +14,15 @@ type Repository struct {
 }
 
 func Init(config config.Config) Repository {
-	return Repository{postgresql: postgresql.Init(config.DBUrl), mapper: mapper.Mapper{}}
+	postgresqlClient := postgresql.Init(config.DBUrl)
+	postgresqlClient.DB.AutoMigrate(dao.User{})
+	postgresqlClient.DB.AutoMigrate(dao.UserNotification{})
+	return Repository{postgresql: postgresqlClient, mapper: mapper.Mapper{}}
 }
 
 func (repository *Repository) GetById(id int64) (*user.User, error) {
 	var daoUser dao.User
-	result := repository.postgresql.DB.Where(&dao.User{Id: id}).First(&daoUser)
+	result := repository.postgresql.DB.Where(&dao.User{Id: id}).Preload("UserNotification").First(&daoUser)
 	if result.Error != nil {
 		return nil, result.Error
 	}

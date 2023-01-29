@@ -6,6 +6,8 @@ Authorization Service
 ## [1.1.0] - 28/01/2023
 ### Fixed
 - Move password validation to domain (register and update)
+### Added
+- gRPC for current user with notifications
 
 ## [1.0.2] - 20/01/2023
 ### Fixed
