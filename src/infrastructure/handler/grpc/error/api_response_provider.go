@@ -25,6 +25,8 @@ func (a *APIResponseProvider) ToAPIResponse(err error) error {
 		return status.Error(codes.Unauthenticated, err.Error())
 	case domainError.Inactive:
 		return status.Error(codes.Unauthenticated, err.Error())
+	case domainError.InvalidPassword:
+		return status.Error(codes.InvalidArgument, err.Error())
 	default:
 		return status.Error(codes.Unknown, err.Error())
 	}

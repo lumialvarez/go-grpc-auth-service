@@ -3,6 +3,7 @@ package update
 import (
 	"context"
 	"github.com/lumialvarez/go-common-tools/hash"
+	"github.com/lumialvarez/go-common-tools/validations/passwordvalidator"
 	domainError "github.com/lumialvarez/go-grpc-auth-service/src/internal/error"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
@@ -30,6 +31,11 @@ func (uc UseCaseUpdateUser) Execute(ctx context.Context, domainUser *user.User) 
 	}
 
 	if len(domainUser.Password()) > 0 {
+		err := passwordvalidator.Validate(domainUser.Password(), 80)
+		if err != nil {
+			return nil, domainError.NewInvalidPassword("Invalid Password (" + err.Error() + ")")
+		}
+
 		domainUser.SetPassword(hash.HashPassword(domainUser.Password()))
 	}
 

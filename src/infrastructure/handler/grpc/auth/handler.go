@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"github.com/lumialvarez/go-common-tools/validations"
-	"github.com/lumialvarez/go-common-tools/validations/passwordvalidator"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/auth/pb"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
@@ -52,11 +51,6 @@ func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useC
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	domainUser := s.ToDomainRegisterRequest(req)
-
-	err := passwordvalidator.Validate(req.Password, 80)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Invalid Password ("+err.Error()+")")
-	}
 
 	if len(domainUser.UserName()) <= 2 || domainUser.Role() == "" || !validations.ValidEmail(req.Email) {
 		return nil, status.Error(codes.InvalidArgument, "Bad request")
