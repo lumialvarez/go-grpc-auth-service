@@ -28,6 +28,7 @@ type AuthServiceClient interface {
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	Current(ctx context.Context, in *CurrentRequest, opts ...grpc.CallOption) (*CurrentResponse, error)
+	ReadNotification(ctx context.Context, in *ReadNotificationRequest, opts ...grpc.CallOption) (*ReadNotificationResponse, error)
 }
 
 type authServiceClient struct {
@@ -92,6 +93,15 @@ func (c *authServiceClient) Current(ctx context.Context, in *CurrentRequest, opt
 	return out, nil
 }
 
+func (c *authServiceClient) ReadNotification(ctx context.Context, in *ReadNotificationRequest, opts ...grpc.CallOption) (*ReadNotificationResponse, error) {
+	out := new(ReadNotificationResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/ReadNotification", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type AuthServiceServer interface {
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	Current(context.Context, *CurrentRequest) (*CurrentResponse, error)
+	ReadNotification(context.Context, *ReadNotificationRequest) (*ReadNotificationResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedAuthServiceServer) Update(context.Context, *UpdateRequest) (*
 }
 func (UnimplementedAuthServiceServer) Current(context.Context, *CurrentRequest) (*CurrentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Current not implemented")
+}
+func (UnimplementedAuthServiceServer) ReadNotification(context.Context, *ReadNotificationRequest) (*ReadNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadNotification not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -248,6 +262,24 @@ func _AuthService_Current_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ReadNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ReadNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/ReadNotification",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ReadNotification(ctx, req.(*ReadNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Current",
 			Handler:    _AuthService_Current_Handler,
+		},
+		{
+			MethodName: "ReadNotification",
+			Handler:    _AuthService_ReadNotification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

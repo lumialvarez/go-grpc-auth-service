@@ -10,6 +10,7 @@ import (
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/current"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/list"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/login"
+	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/read_notification"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/register"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/update"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/validate"
@@ -34,9 +35,10 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	useCaseList := list.NewUseCaseListUser(&userRepository)
 	useCaseUpdate := update.NewUseCaseUpdateUser(&userRepository)
 	useCaseCurrent := current.NewUseCaseCurrentUser(&userRepository, &jwtService)
+	useCaseReadNotification := read_notification.NewUseCaseReadNotification(&userRepository)
 	apiResponseProvider := errorGrpc.NewAPIResponseProvider()
 
-	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate, useCaseList, useCaseUpdate, useCaseCurrent, apiResponseProvider)
+	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate, useCaseList, useCaseUpdate, useCaseCurrent, useCaseReadNotification, apiResponseProvider)
 
 	return DependenciesContainer{
 		AuthService: &s,

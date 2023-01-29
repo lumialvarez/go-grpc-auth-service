@@ -91,9 +91,32 @@ func (repository *Repository) GetAll() (*[]user.User, error) {
 		return nil, result.Error
 	}
 	var domainUsers []user.User
-	for _, dao := range daoUsers {
-		domainUsers = append(domainUsers, *repository.mapper.ToDomain(&dao))
+	for _, daoUser := range daoUsers {
+		domainUsers = append(domainUsers, *repository.mapper.ToDomain(&daoUser))
 	}
 
 	return &domainUsers, nil
+}
+
+func (repository *Repository) MarkReadNotification(userId int64, notificationId int64) error {
+	var daoUser dao.User
+	updateUser := make(map[string]interface{})
+	updateUser["read"] = "true"
+
+	result := repository.postgresql.DB.Where(&dao.User{Id: userId}).Preload("UserNotification").First(&daoUser)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, notification := range daoUser.UserNotification {
+		if notification.Id == notificationId {
+			result := repository.postgresql.DB.Model(&notification).Updates(updateUser)
+			if result.Error != nil {
+				return result.Error
+			}
+			break
+		}
+	}
+
+	return nil
 }

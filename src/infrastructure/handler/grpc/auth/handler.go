@@ -36,24 +36,29 @@ type UseCaseCurrent interface {
 	Execute(ctx context.Context, token string) (*user.User, error)
 }
 
+type UseCaseReadNotification interface {
+	Execute(ctx context.Context, userId int64, notificationId int64) error
+}
+
 type ApiResponseProvider interface {
 	ToAPIResponse(err error) error
 }
 
 type Handler struct {
-	useCaseRegister     UseCaseRegister
-	useCaseLogin        UseCaseLogin
-	useCaseValidate     UseCaseValidate
-	useCaseList         UseCaseList
-	useCaseUpdate       UseCaseUpdate
-	useCaseCurrent      UseCaseCurrent
-	apiResponseProvider ApiResponseProvider
+	useCaseRegister         UseCaseRegister
+	useCaseLogin            UseCaseLogin
+	useCaseValidate         UseCaseValidate
+	useCaseList             UseCaseList
+	useCaseUpdate           UseCaseUpdate
+	useCaseCurrent          UseCaseCurrent
+	useCaseReadNotification UseCaseReadNotification
+	apiResponseProvider     ApiResponseProvider
 	mapper.Mapper
 	pb.UnimplementedAuthServiceServer
 }
 
-func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, useCaseList UseCaseList, useCaseUpdate UseCaseUpdate, useCaseCurrent UseCaseCurrent, apiResponseProvider ApiResponseProvider) Handler {
-	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, useCaseList: useCaseList, useCaseUpdate: useCaseUpdate, useCaseCurrent: useCaseCurrent, apiResponseProvider: apiResponseProvider}
+func NewHandler(useCaseRegister UseCaseRegister, useCaseLogin UseCaseLogin, useCaseValidate UseCaseValidate, useCaseList UseCaseList, useCaseUpdate UseCaseUpdate, useCaseCurrent UseCaseCurrent, useCaseReadNotification UseCaseReadNotification, apiResponseProvider ApiResponseProvider) Handler {
+	return Handler{useCaseRegister: useCaseRegister, useCaseLogin: useCaseLogin, useCaseValidate: useCaseValidate, useCaseList: useCaseList, useCaseUpdate: useCaseUpdate, useCaseCurrent: useCaseCurrent, useCaseReadNotification: useCaseReadNotification, apiResponseProvider: apiResponseProvider}
 }
 
 func (s *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
@@ -136,4 +141,15 @@ func (s *Handler) Current(ctx context.Context, req *pb.CurrentRequest) (*pb.Curr
 	println(domainUser)
 
 	return s.ToDTOCurrentResponse(domainUser), nil
+}
+
+func (s *Handler) ReadNotification(ctx context.Context, req *pb.ReadNotificationRequest) (*pb.ReadNotificationResponse, error) {
+	userId := req.UserId
+	notificationId := req.NotificationId
+
+	err := s.useCaseReadNotification.Execute(ctx, userId, notificationId)
+	if err != nil {
+		return nil, s.apiResponseProvider.ToAPIResponse(err)
+	}
+	return &pb.ReadNotificationResponse{}, nil
 }

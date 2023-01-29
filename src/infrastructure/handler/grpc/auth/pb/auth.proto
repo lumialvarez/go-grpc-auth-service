@@ -11,6 +11,7 @@ service AuthService {
   rpc List(ListRequest) returns (ListResponse) {}
   rpc Update(UpdateRequest) returns (UpdateResponse) {}
   rpc Current(CurrentRequest) returns (CurrentResponse) {}
+  rpc ReadNotification(ReadNotificationRequest) returns (ReadNotificationResponse) {}
 }
 
 // Register
@@ -105,4 +106,14 @@ message CurrentResponse {
   string  role = 5;
   repeated UserNotification notifications = 6;
 }
+
+// Read Notification
+message ReadNotificationRequest {
+  int64 userId = 1;
+  int64 notificationId = 2;
+}
+
+message ReadNotificationResponse {
+}
+
 
