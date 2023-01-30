@@ -1,15 +1,28 @@
 package notification
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/lumialvarez/go-common-tools/platform/rabbitmq"
+	"github.com/lumialvarez/go-common-tools/service/rabbitmq/notification/dto"
+	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/consumers/notification/mapper"
+	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
 	"time"
 )
 
+type UseCaseCreateNotification interface {
+	Execute(notification user.Notification) error
+}
+
 type Consumer struct {
+	useCaseCreateNotification UseCaseCreateNotification
+	mapper.Mapper
+}
+
+func NewConsumer(useCaseCreateNotification UseCaseCreateNotification) Consumer {
+	return Consumer{useCaseCreateNotification: useCaseCreateNotification}
 }
 
 func (consumer Consumer) Init() {
@@ -46,9 +59,11 @@ func (consumer Consumer) Init() {
 	go func() {
 		for d := range msgs {
 
-			err := handleNotificationMessage(d)
+			err, requeue := consumer.handleNotificationMessage(d)
 			if err != nil {
 				log.Print("Failed to handle notification message")
+				d.Nack(false, requeue)
+
 				continue
 			}
 			d.Ack(false)
@@ -56,14 +71,23 @@ func (consumer Consumer) Init() {
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	log.Printf(" [*] Waiting for notifications messages.")
 	<-forever
 }
 
-func handleNotificationMessage(delivery amqp.Delivery) error {
-	body := string(delivery.Body)
+func (consumer Consumer) handleNotificationMessage(delivery amqp.Delivery) (error, bool) {
+	request := dto.Notification{}
+	err := json.Unmarshal(delivery.Body, &request)
+	if err != nil {
+		return err, false
+	}
 
-	fmt.Println(body)
+	domainNotification := consumer.ToDomain(request)
 
-	return nil
+	err = consumer.useCaseCreateNotification.Execute(*domainNotification)
+	if err != nil {
+		return err, true
+	}
+
+	return nil, true
 }

@@ -98,6 +98,24 @@ func (repository *Repository) GetAll() (*[]user.User, error) {
 	return &domainUsers, nil
 }
 
+func (repository *Repository) CreateNotificationToAdminUsers(notification user.Notification) error {
+	var daoUsers []dao.User
+	result := repository.postgresql.DB.Where(&dao.User{Rol: user.RolAdmin}).Preload("UserNotification").Find(&daoUsers)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, daoUser := range daoUsers {
+		daoNotification := repository.mapper.ToDAONotification(daoUser.Id, &notification)
+		result := repository.postgresql.DB.Where(&daoUser).Model(&daoNotification).Create(&daoNotification)
+		if result.Error != nil {
+			return result.Error
+		}
+	}
+
+	return nil
+}
+
 func (repository *Repository) MarkReadNotification(userId int64, notificationId int64) error {
 	var daoUser dao.User
 	updateUser := make(map[string]interface{})

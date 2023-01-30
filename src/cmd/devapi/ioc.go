@@ -9,6 +9,7 @@ import (
 	errorGrpc "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/grpc/error"
 	repositoryUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user"
 	serviceJwtUser "github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user"
+	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/create_notification"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/current"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/list"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user/usecase/login"
@@ -38,12 +39,13 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	useCaseList := list.NewUseCaseListUser(&userRepository)
 	useCaseUpdate := update.NewUseCaseUpdateUser(&userRepository)
 	useCaseCurrent := current.NewUseCaseCurrentUser(&userRepository, &jwtService)
+	useCaseCreateNotification := create_notification.NewUseCaseCreateNotification(&userRepository)
 	useCaseReadNotification := read_notification.NewUseCaseReadNotification(&userRepository)
 	apiResponseProvider := errorGrpc.NewAPIResponseProvider()
 
 	s := auth.NewHandler(userCaseRegister, useCaseLogin, useCaseValidate, useCaseList, useCaseUpdate, useCaseCurrent, useCaseReadNotification, apiResponseProvider)
 
-	notificationConsumer := notification.Consumer{}
+	notificationConsumer := notification.NewConsumer(useCaseCreateNotification)
 	go func() {
 		notificationConsumer.Init()
 	}()

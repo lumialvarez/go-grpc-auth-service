@@ -30,3 +30,14 @@ func (m Mapper) ToDAO(domainUser *user.User) *dao.User {
 	}
 	return &daoUser
 }
+
+func (m Mapper) ToDAONotification(userId int64, domainNotification *user.Notification) *dao.UserNotification {
+	daoUserNotification := dao.UserNotification{
+		IdUser: userId,
+		Title:  domainNotification.Title(),
+		Detail: domainNotification.Detail(),
+	}
+
+	//daoUser.UserNotification = append(daoUser.UserNotification, daoUserNotification)
+	return &daoUserNotification
+}

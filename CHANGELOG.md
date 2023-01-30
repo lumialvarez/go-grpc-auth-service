@@ -10,6 +10,7 @@ Authorization Service
 ### Added
 - gRPC for current user with notifications
 - gRPC for read user notification
+- RabbitMQ Consumer of user notifications
 
 ## [1.0.2] - 20/01/2023
 ### Fixed
