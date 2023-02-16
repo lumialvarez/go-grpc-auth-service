@@ -3,6 +3,15 @@ Authorization Service
 
 ## [Unreleased]
 
+## [1.1.0] - 15/02/2023
+### Fixed
+- Move password validation to domain (register and update)
+- Migrate postgresql client to Commons
+### Added
+- gRPC for current user with notifications
+- gRPC for read user notification
+- RabbitMQ Consumer of user notifications
+
 ## [1.0.2] - 20/01/2023
 ### Fixed
 - Remove Deploy Stage

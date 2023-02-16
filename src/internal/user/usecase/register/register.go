@@ -3,6 +3,7 @@ package register
 import (
 	"context"
 	"github.com/lumialvarez/go-common-tools/hash"
+	"github.com/lumialvarez/go-common-tools/validations/passwordvalidator"
 	domainError "github.com/lumialvarez/go-grpc-auth-service/src/internal/error"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 )
@@ -22,8 +23,14 @@ func NewUseCaseRegisterUser(repository Repository) UseCaseRegisterUser {
 }
 
 func (uc UseCaseRegisterUser) Execute(ctx context.Context, domainUser *user.User) (*user.User, error) {
+
+	err := passwordvalidator.Validate(domainUser.Password(), 80)
+	if err != nil {
+		return nil, domainError.NewInvalidPassword("Invalid Password (" + err.Error() + ")")
+	}
+
 	domainUser.SetPassword(hash.HashPassword(domainUser.Password()))
-	_, err := uc.repository.GetByUserName(domainUser.UserName())
+	_, err = uc.repository.GetByUserName(domainUser.UserName())
 	if err == nil {
 		return nil, domainError.NewAlreadyExists("User Name already exists")
 	}

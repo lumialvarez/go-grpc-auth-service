@@ -10,6 +10,8 @@ service AuthService {
   rpc Validate(ValidateRequest) returns (ValidateResponse) {}
   rpc List(ListRequest) returns (ListResponse) {}
   rpc Update(UpdateRequest) returns (UpdateResponse) {}
+  rpc Current(CurrentRequest) returns (CurrentResponse) {}
+  rpc ReadNotification(ReadNotificationRequest) returns (ReadNotificationResponse) {}
 }
 
 // Register
@@ -83,3 +85,35 @@ message UpdateRequest {
 
 message UpdateResponse {
 }
+
+// Current
+message CurrentRequest {
+}
+
+message CurrentResponse {
+  message UserNotification {
+    int64   id = 1;
+    string  title = 2;
+    string  detail = 3;
+    string  date = 4;
+    bool    read = 5;
+  }
+
+  int64   userId = 1;
+  string  name = 2;
+  string  userName = 3;
+  string  email = 4;
+  string  role = 5;
+  repeated UserNotification notifications = 6;
+}
+
+// Read Notification
+message ReadNotificationRequest {
+  int64 userId = 1;
+  int64 notificationId = 2;
+}
+
+message ReadNotificationResponse {
+}
+
+

@@ -1,25 +1,36 @@
 package user
 
+import "time"
+
 type User struct {
-	id       int64
-	name     string
-	userName string
-	email    string
-	password string
-	token    string
-	role     Role
-	status   bool
+	id            int64
+	name          string
+	userName      string
+	email         string
+	password      string
+	token         string
+	role          Role
+	status        bool
+	notifications []Notification
 }
 
 type Role string
+
+type Notification struct {
+	id     int64
+	title  string
+	detail string
+	date   time.Time
+	read   bool
+}
 
 const (
 	RolUser  Role = "role_user"
 	RolAdmin      = "role_admin"
 )
 
-func NewUser(id int64, name string, userName string, email string, password string, token string, role Role, status bool) *User {
-	return &User{id: id, name: name, userName: userName, email: email, password: password, token: token, role: role, status: status}
+func NewUser(id int64, name string, userName string, email string, password string, token string, role Role, status bool, notifications []Notification) *User {
+	return &User{id: id, name: name, userName: userName, email: email, password: password, token: token, role: role, status: status, notifications: notifications}
 }
 
 func (u *User) Id() int64 {
@@ -64,4 +75,36 @@ func (u *User) Status() bool {
 
 func (u *User) SetStatus(status bool) {
 	u.status = status
+}
+
+func (u *User) Notifications() []Notification {
+	return u.notifications
+}
+
+func NewNotification(id int64, title string, detail string, date time.Time, read bool) *Notification {
+	return &Notification{id: id, title: title, detail: detail, date: date, read: read}
+}
+
+func (n *Notification) SetRead(read bool) {
+	n.read = read
+}
+
+func (n Notification) Id() int64 {
+	return n.id
+}
+
+func (n Notification) Title() string {
+	return n.title
+}
+
+func (n Notification) Detail() string {
+	return n.detail
+}
+
+func (n Notification) Date() time.Time {
+	return n.date
+}
+
+func (n Notification) Read() bool {
+	return n.read
 }

@@ -9,7 +9,13 @@ type Mapper struct {
 }
 
 func (m Mapper) ToDomain(daoUser *dao.User) *user.User {
-	return user.NewUser(daoUser.Id, daoUser.Name, daoUser.UserName, daoUser.Email, daoUser.Password, "", user.Role(daoUser.Rol), daoUser.Status)
+	var domainNotifications []user.Notification
+	for _, daoNotification := range daoUser.UserNotification {
+		domainNotification := user.NewNotification(daoNotification.Id, daoNotification.Title, daoNotification.Detail, daoNotification.Date, daoNotification.Read)
+		domainNotifications = append(domainNotifications, *domainNotification)
+	}
+
+	return user.NewUser(daoUser.Id, daoUser.Name, daoUser.UserName, daoUser.Email, daoUser.Password, "", user.Role(daoUser.Rol), daoUser.Status, domainNotifications)
 }
 
 func (m Mapper) ToDAO(domainUser *user.User) *dao.User {
@@ -23,4 +29,15 @@ func (m Mapper) ToDAO(domainUser *user.User) *dao.User {
 		Status:   domainUser.Status(),
 	}
 	return &daoUser
+}
+
+func (m Mapper) ToDAONotification(userId int64, domainNotification *user.Notification) *dao.UserNotification {
+	daoUserNotification := dao.UserNotification{
+		IdUser: userId,
+		Title:  domainNotification.Title(),
+		Detail: domainNotification.Detail(),
+	}
+
+	//daoUser.UserNotification = append(daoUser.UserNotification, daoUserNotification)
+	return &daoUserNotification
 }

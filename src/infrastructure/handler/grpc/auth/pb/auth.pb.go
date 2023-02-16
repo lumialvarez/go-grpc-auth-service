@@ -574,6 +574,226 @@ func (*UpdateResponse) Descriptor() ([]byte, []int) {
 	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{9}
 }
 
+// Current
+type CurrentRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *CurrentRequest) Reset() {
+	*x = CurrentRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrentRequest) ProtoMessage() {}
+
+func (x *CurrentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrentRequest.ProtoReflect.Descriptor instead.
+func (*CurrentRequest) Descriptor() ([]byte, []int) {
+	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{10}
+}
+
+type CurrentResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId        int64                               `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Name          string                              `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	UserName      string                              `protobuf:"bytes,3,opt,name=userName,proto3" json:"userName,omitempty"`
+	Email         string                              `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	Role          string                              `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
+	Notifications []*CurrentResponse_UserNotification `protobuf:"bytes,6,rep,name=notifications,proto3" json:"notifications,omitempty"`
+}
+
+func (x *CurrentResponse) Reset() {
+	*x = CurrentResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrentResponse) ProtoMessage() {}
+
+func (x *CurrentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrentResponse.ProtoReflect.Descriptor instead.
+func (*CurrentResponse) Descriptor() ([]byte, []int) {
+	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CurrentResponse) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CurrentResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CurrentResponse) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
+func (x *CurrentResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *CurrentResponse) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *CurrentResponse) GetNotifications() []*CurrentResponse_UserNotification {
+	if x != nil {
+		return x.Notifications
+	}
+	return nil
+}
+
+// Read Notification
+type ReadNotificationRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId         int64 `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	NotificationId int64 `protobuf:"varint,2,opt,name=notificationId,proto3" json:"notificationId,omitempty"`
+}
+
+func (x *ReadNotificationRequest) Reset() {
+	*x = ReadNotificationRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReadNotificationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReadNotificationRequest) ProtoMessage() {}
+
+func (x *ReadNotificationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReadNotificationRequest.ProtoReflect.Descriptor instead.
+func (*ReadNotificationRequest) Descriptor() ([]byte, []int) {
+	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ReadNotificationRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ReadNotificationRequest) GetNotificationId() int64 {
+	if x != nil {
+		return x.NotificationId
+	}
+	return 0
+}
+
+type ReadNotificationResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ReadNotificationResponse) Reset() {
+	*x = ReadNotificationResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReadNotificationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReadNotificationResponse) ProtoMessage() {}
+
+func (x *ReadNotificationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReadNotificationResponse.ProtoReflect.Descriptor instead.
+func (*ReadNotificationResponse) Descriptor() ([]byte, []int) {
+	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{13}
+}
+
 type ListResponse_UserList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -590,7 +810,7 @@ type ListResponse_UserList struct {
 func (x *ListResponse_UserList) Reset() {
 	*x = ListResponse_UserList{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[10]
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -603,7 +823,7 @@ func (x *ListResponse_UserList) String() string {
 func (*ListResponse_UserList) ProtoMessage() {}
 
 func (x *ListResponse_UserList) ProtoReflect() protoreflect.Message {
-	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[10]
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -678,7 +898,7 @@ type UpdateRequest_UserUpdate struct {
 func (x *UpdateRequest_UserUpdate) Reset() {
 	*x = UpdateRequest_UserUpdate{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[11]
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -691,7 +911,7 @@ func (x *UpdateRequest_UserUpdate) String() string {
 func (*UpdateRequest_UserUpdate) ProtoMessage() {}
 
 func (x *UpdateRequest_UserUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[11]
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -752,6 +972,85 @@ func (x *UpdateRequest_UserUpdate) GetRole() string {
 func (x *UpdateRequest_UserUpdate) GetStatus() bool {
 	if x != nil {
 		return x.Status
+	}
+	return false
+}
+
+type CurrentResponse_UserNotification struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id     int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title  string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Detail string `protobuf:"bytes,3,opt,name=detail,proto3" json:"detail,omitempty"`
+	Date   string `protobuf:"bytes,4,opt,name=date,proto3" json:"date,omitempty"`
+	Read   bool   `protobuf:"varint,5,opt,name=read,proto3" json:"read,omitempty"`
+}
+
+func (x *CurrentResponse_UserNotification) Reset() {
+	*x = CurrentResponse_UserNotification{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CurrentResponse_UserNotification) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrentResponse_UserNotification) ProtoMessage() {}
+
+func (x *CurrentResponse_UserNotification) ProtoReflect() protoreflect.Message {
+	mi := &file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrentResponse_UserNotification.ProtoReflect.Descriptor instead.
+func (*CurrentResponse_UserNotification) Descriptor() ([]byte, []int) {
+	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP(), []int{11, 0}
+}
+
+func (x *CurrentResponse_UserNotification) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CurrentResponse_UserNotification) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CurrentResponse_UserNotification) GetDetail() string {
+	if x != nil {
+		return x.Detail
+	}
+	return ""
+}
+
+func (x *CurrentResponse_UserNotification) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *CurrentResponse_UserNotification) GetRead() bool {
+	if x != nil {
+		return x.Read
 	}
 	return false
 }
@@ -830,29 +1129,67 @@ var file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDesc = []byte{
 	0x6f, 0x6c, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12,
 	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x07, 0x20, 0x01, 0x28, 0x08, 0x52,
 	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x10, 0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xa3, 0x02, 0x0a, 0x0b, 0x41, 0x75,
-	0x74, 0x68, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3b, 0x0a, 0x08, 0x52, 0x65, 0x67,
-	0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67,
-	0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61,
-	0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12,
-	0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x08, 0x56, 0x61,
-	0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x56, 0x61,
-	0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
-	0x61, 0x75, 0x74, 0x68, 0x2e, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2f, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12,
-	0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x12, 0x13, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42,
-	0x2b, 0x5a, 0x29, 0x2e, 0x2f, 0x73, 0x72, 0x63, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x73, 0x74,
-	0x72, 0x75, 0x63, 0x74, 0x75, 0x72, 0x65, 0x2f, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x2f,
-	0x67, 0x72, 0x70, 0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x10, 0x0a, 0x0e, 0x43, 0x75, 0x72,
+	0x72, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0xcb, 0x02, 0x0a, 0x0f,
+	0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x75,
+	0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75,
+	0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x12, 0x0a,
+	0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c,
+	0x65, 0x12, 0x4c, 0x0a, 0x0d, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e,
+	0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e,
+	0x55, 0x73, 0x65, 0x72, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x0d, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x1a,
+	0x78, 0x0a, 0x10, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x64, 0x65, 0x74,
+	0x61, 0x69, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x64, 0x65, 0x74, 0x61, 0x69,
+	0x6c, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x64, 0x61, 0x74, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x65, 0x61, 0x64, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x08, 0x52, 0x04, 0x72, 0x65, 0x61, 0x64, 0x22, 0x59, 0x0a, 0x17, 0x52, 0x65, 0x61,
+	0x64, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x26, 0x0a, 0x0e,
+	0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x0e, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x49, 0x64, 0x22, 0x1a, 0x0a, 0x18, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f, 0x74, 0x69,
+	0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x32, 0xb2, 0x03, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x12, 0x3b, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x15, 0x2e, 0x61,
+	0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73,
+	0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x32, 0x0a,
+	0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x6f,
+	0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x61, 0x75, 0x74,
+	0x68, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x3b, 0x0a, 0x08, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x12, 0x15, 0x2e,
+	0x61, 0x75, 0x74, 0x68, 0x2e, 0x56, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x56, 0x61, 0x6c, 0x69,
+	0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2f,
+	0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x69,
+	0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x35, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x13, 0x2e, 0x61, 0x75, 0x74, 0x68,
+	0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14,
+	0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x38, 0x0a, 0x07, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e,
+	0x74, 0x12, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x43,
+	0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
+	0x12, 0x53, 0x0a, 0x10, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1d, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x61, 0x64,
+	0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x2b, 0x5a, 0x29, 0x2e, 0x2f, 0x73, 0x72, 0x63, 0x2f, 0x69,
+	0x6e, 0x66, 0x72, 0x61, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x75, 0x72, 0x65, 0x2f, 0x68, 0x61,
+	0x6e, 0x64, 0x6c, 0x65, 0x72, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f,
+	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -867,39 +1204,49 @@ func file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescGZIP() []byt
 	return file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDescData
 }
 
-var file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_src_infrastructure_handler_grpc_auth_pb_auth_proto_goTypes = []interface{}{
-	(*RegisterRequest)(nil),          // 0: auth.RegisterRequest
-	(*RegisterResponse)(nil),         // 1: auth.RegisterResponse
-	(*LoginRequest)(nil),             // 2: auth.LoginRequest
-	(*LoginResponse)(nil),            // 3: auth.LoginResponse
-	(*ValidateRequest)(nil),          // 4: auth.ValidateRequest
-	(*ValidateResponse)(nil),         // 5: auth.ValidateResponse
-	(*ListRequest)(nil),              // 6: auth.ListRequest
-	(*ListResponse)(nil),             // 7: auth.ListResponse
-	(*UpdateRequest)(nil),            // 8: auth.UpdateRequest
-	(*UpdateResponse)(nil),           // 9: auth.UpdateResponse
-	(*ListResponse_UserList)(nil),    // 10: auth.ListResponse.UserList
-	(*UpdateRequest_UserUpdate)(nil), // 11: auth.UpdateRequest.UserUpdate
+	(*RegisterRequest)(nil),                  // 0: auth.RegisterRequest
+	(*RegisterResponse)(nil),                 // 1: auth.RegisterResponse
+	(*LoginRequest)(nil),                     // 2: auth.LoginRequest
+	(*LoginResponse)(nil),                    // 3: auth.LoginResponse
+	(*ValidateRequest)(nil),                  // 4: auth.ValidateRequest
+	(*ValidateResponse)(nil),                 // 5: auth.ValidateResponse
+	(*ListRequest)(nil),                      // 6: auth.ListRequest
+	(*ListResponse)(nil),                     // 7: auth.ListResponse
+	(*UpdateRequest)(nil),                    // 8: auth.UpdateRequest
+	(*UpdateResponse)(nil),                   // 9: auth.UpdateResponse
+	(*CurrentRequest)(nil),                   // 10: auth.CurrentRequest
+	(*CurrentResponse)(nil),                  // 11: auth.CurrentResponse
+	(*ReadNotificationRequest)(nil),          // 12: auth.ReadNotificationRequest
+	(*ReadNotificationResponse)(nil),         // 13: auth.ReadNotificationResponse
+	(*ListResponse_UserList)(nil),            // 14: auth.ListResponse.UserList
+	(*UpdateRequest_UserUpdate)(nil),         // 15: auth.UpdateRequest.UserUpdate
+	(*CurrentResponse_UserNotification)(nil), // 16: auth.CurrentResponse.UserNotification
 }
 var file_src_infrastructure_handler_grpc_auth_pb_auth_proto_depIdxs = []int32{
-	10, // 0: auth.ListResponse.users:type_name -> auth.ListResponse.UserList
-	11, // 1: auth.UpdateRequest.user:type_name -> auth.UpdateRequest.UserUpdate
-	0,  // 2: auth.AuthService.Register:input_type -> auth.RegisterRequest
-	2,  // 3: auth.AuthService.Login:input_type -> auth.LoginRequest
-	4,  // 4: auth.AuthService.Validate:input_type -> auth.ValidateRequest
-	6,  // 5: auth.AuthService.List:input_type -> auth.ListRequest
-	8,  // 6: auth.AuthService.Update:input_type -> auth.UpdateRequest
-	1,  // 7: auth.AuthService.Register:output_type -> auth.RegisterResponse
-	3,  // 8: auth.AuthService.Login:output_type -> auth.LoginResponse
-	5,  // 9: auth.AuthService.Validate:output_type -> auth.ValidateResponse
-	7,  // 10: auth.AuthService.List:output_type -> auth.ListResponse
-	9,  // 11: auth.AuthService.Update:output_type -> auth.UpdateResponse
-	7,  // [7:12] is the sub-list for method output_type
-	2,  // [2:7] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	14, // 0: auth.ListResponse.users:type_name -> auth.ListResponse.UserList
+	15, // 1: auth.UpdateRequest.user:type_name -> auth.UpdateRequest.UserUpdate
+	16, // 2: auth.CurrentResponse.notifications:type_name -> auth.CurrentResponse.UserNotification
+	0,  // 3: auth.AuthService.Register:input_type -> auth.RegisterRequest
+	2,  // 4: auth.AuthService.Login:input_type -> auth.LoginRequest
+	4,  // 5: auth.AuthService.Validate:input_type -> auth.ValidateRequest
+	6,  // 6: auth.AuthService.List:input_type -> auth.ListRequest
+	8,  // 7: auth.AuthService.Update:input_type -> auth.UpdateRequest
+	10, // 8: auth.AuthService.Current:input_type -> auth.CurrentRequest
+	12, // 9: auth.AuthService.ReadNotification:input_type -> auth.ReadNotificationRequest
+	1,  // 10: auth.AuthService.Register:output_type -> auth.RegisterResponse
+	3,  // 11: auth.AuthService.Login:output_type -> auth.LoginResponse
+	5,  // 12: auth.AuthService.Validate:output_type -> auth.ValidateResponse
+	7,  // 13: auth.AuthService.List:output_type -> auth.ListResponse
+	9,  // 14: auth.AuthService.Update:output_type -> auth.UpdateResponse
+	11, // 15: auth.AuthService.Current:output_type -> auth.CurrentResponse
+	13, // 16: auth.AuthService.ReadNotification:output_type -> auth.ReadNotificationResponse
+	10, // [10:17] is the sub-list for method output_type
+	3,  // [3:10] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_src_infrastructure_handler_grpc_auth_pb_auth_proto_init() }
@@ -1029,7 +1376,7 @@ func file_src_infrastructure_handler_grpc_auth_pb_auth_proto_init() {
 			}
 		}
 		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListResponse_UserList); i {
+			switch v := v.(*CurrentRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1041,7 +1388,67 @@ func file_src_infrastructure_handler_grpc_auth_pb_auth_proto_init() {
 			}
 		}
 		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrentResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReadNotificationRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReadNotificationResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListResponse_UserList); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateRequest_UserUpdate); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_infrastructure_handler_grpc_auth_pb_auth_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CurrentResponse_UserNotification); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1060,7 +1467,7 @@ func file_src_infrastructure_handler_grpc_auth_pb_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_src_infrastructure_handler_grpc_auth_pb_auth_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

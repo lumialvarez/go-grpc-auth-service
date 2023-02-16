@@ -1,8 +1,8 @@
 package repositoryUser
 
 import (
+	"github.com/lumialvarez/go-common-tools/platform/postgresql"
 	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
-	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/platform/postgresql"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/dao"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/repository/postgresql/user/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
@@ -14,12 +14,15 @@ type Repository struct {
 }
 
 func Init(config config.Config) Repository {
-	return Repository{postgresql: postgresql.Init(config.DBUrl), mapper: mapper.Mapper{}}
+	postgresqlClient := postgresql.Init(config.DBUrl)
+	postgresqlClient.DB.AutoMigrate(dao.User{})
+	postgresqlClient.DB.AutoMigrate(dao.UserNotification{})
+	return Repository{postgresql: postgresqlClient, mapper: mapper.Mapper{}}
 }
 
 func (repository *Repository) GetById(id int64) (*user.User, error) {
 	var daoUser dao.User
-	result := repository.postgresql.DB.Where(&dao.User{Id: id}).First(&daoUser)
+	result := repository.postgresql.DB.Where(&dao.User{Id: id}).Preload("UserNotification").First(&daoUser)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -88,9 +91,50 @@ func (repository *Repository) GetAll() (*[]user.User, error) {
 		return nil, result.Error
 	}
 	var domainUsers []user.User
-	for _, dao := range daoUsers {
-		domainUsers = append(domainUsers, *repository.mapper.ToDomain(&dao))
+	for _, daoUser := range daoUsers {
+		domainUsers = append(domainUsers, *repository.mapper.ToDomain(&daoUser))
 	}
 
 	return &domainUsers, nil
+}
+
+func (repository *Repository) CreateNotificationToAdminUsers(notification user.Notification) error {
+	var daoUsers []dao.User
+	result := repository.postgresql.DB.Where(&dao.User{Rol: user.RolAdmin}).Preload("UserNotification").Find(&daoUsers)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, daoUser := range daoUsers {
+		daoNotification := repository.mapper.ToDAONotification(daoUser.Id, &notification)
+		result := repository.postgresql.DB.Where(&daoUser).Model(&daoNotification).Create(&daoNotification)
+		if result.Error != nil {
+			return result.Error
+		}
+	}
+
+	return nil
+}
+
+func (repository *Repository) MarkReadNotification(userId int64, notificationId int64) error {
+	var daoUser dao.User
+	updateUser := make(map[string]interface{})
+	updateUser["read"] = "true"
+
+	result := repository.postgresql.DB.Where(&dao.User{Id: userId}).Preload("UserNotification").First(&daoUser)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, notification := range daoUser.UserNotification {
+		if notification.Id == notificationId {
+			result := repository.postgresql.DB.Model(&notification).Updates(updateUser)
+			if result.Error != nil {
+				return result.Error
+			}
+			break
+		}
+	}
+
+	return nil
 }
