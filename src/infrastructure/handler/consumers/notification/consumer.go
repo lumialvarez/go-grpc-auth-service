@@ -61,9 +61,10 @@ func (consumer Consumer) Init() {
 
 			err, requeue := consumer.handleNotificationMessage(d)
 			if err != nil {
-				log.Print("Failed to handle notification message")
+				log.Print("Failed to handle notification message", err)
 				d.Nack(false, requeue)
 
+				time.Sleep(500 * time.Millisecond)
 				continue
 			}
 			d.Ack(false)

@@ -3,7 +3,7 @@ Authorization Service
 
 ## [Unreleased]
 
-## [1.1.0] - 28/01/2023
+## [1.1.0] - 15/02/2023
 ### Fixed
 - Move password validation to domain (register and update)
 - Migrate postgresql client to Commons
