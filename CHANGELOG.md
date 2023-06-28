@@ -3,6 +3,11 @@ Authorization Service
 
 ## [Unreleased]
 
+## [1.1.1] - 27/06/2023
+### Fixed
+- Update dependencies
+- Change to go 1.20
+
 ## [1.1.0] - 15/02/2023
 ### Fixed
 - Move password validation to domain (register and update)
