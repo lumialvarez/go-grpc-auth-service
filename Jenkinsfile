@@ -1,19 +1,6 @@
 def APP_VERSION
 pipeline {
    agent any
-   tools {
-        jdk 'JDK'
-    }
-   environment {
-      SSH_MAIN_SERVER = credentials("SSH_MAIN_SERVER")
-
-      DATASOURCE_URL_CLEARED = credentials("DATASOURCE_DOCKER_URL_CLEARED")
-      DATASOURCE_USERNAME = credentials("DATASOURCE_USERNAME")
-      DATASOURCE_PASSWORD = credentials("DATASOURCE_PASSWORD")
-      JWT_SECRET = credentials("JWT_SECRET")
-
-      DOCKERHUB_CREDENTIALS=credentials('dockerhub-lmalvarez')
-   }
    stages {
       stage('Get Version') {
          steps {
@@ -38,20 +25,6 @@ pipeline {
             }
          }
       }
-      stage('Test') {
-         steps {
-            //sh 'go test ./...'
-            sh 'echo test'
-         }
-      }
-      stage('Build') {
-            steps {
-                sh "python replace-variables.py ${WORKSPACE}/src/cmd/devapi/config/envs/prod.env DATASOURCE_URL_CLEARED=${DATASOURCE_URL_CLEARED} DATASOURCE_USERNAME=${DATASOURCE_USERNAME} DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD} JWT_SECRET=${JWT_SECRET}"
-                sh 'cat src/cmd/devapi/config/envs/prod.env'
-
-                sh "docker build . -t lmalvarez/go-grpc-auth-service:${APP_VERSION}"
-            }
-        }
       stage('GIT tag') {
           steps {
               git branch: 'main', credentialsId: 'git-token-lumi', url: 'https://github.com/lumialvarez/go-grpc-auth-service.git'
@@ -64,12 +37,5 @@ pipeline {
               }
           }
       }
-      stage('Push') {
-            steps {
-                sh '''echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin '''
-
-                sh "docker push lmalvarez/go-grpc-auth-service:${APP_VERSION}"
-            }
-        }
    }
 }

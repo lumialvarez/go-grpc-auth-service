@@ -28,9 +28,9 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 	publishNotificationService := notificationPublisher.Init()
 
 	jwtService := serviceJwtUser.Service{
-		SecretKey:       config.JWTSecretKey,
-		Issuer:          "go-grpc-auth-service",
-		ExpirationHours: 24 * 365,
+		SecretKey:       config.JwtSecretKey,
+		Issuer:          config.JwtIssuer,
+		ExpirationHours: config.JwtExpirationHours,
 	}
 
 	userCaseRegister := register.NewUseCaseRegisterUser(&userRepository)
@@ -47,7 +47,7 @@ func LoadDependencies(config config.Config) DependenciesContainer {
 
 	notificationConsumer := notification.NewConsumer(useCaseCreateNotification)
 	go func() {
-		notificationConsumer.Init()
+		notificationConsumer.Init(config)
 	}()
 
 	return DependenciesContainer{
