@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -8,13 +9,16 @@ import (
 
 //goland:noinspection SpellCheckingInspection
 type Config struct {
-	Port         string `mapstructure:"PORT"`
-	DBUrl        string `mapstructure:"DB_URL"`
-	JWTSecretKey string `mapstructure:"JWT_SECRET_KEY"`
+	Port               string `mapstructure:"PORT"`
+	JwtExpirationHours int64  `mapstructure:"JWT_EXPIRATION_HOURS"`
+	JwtIssuer          string `mapstructure:"JWT_ISSUER"`
+	DBUrl              string
+	RabbitMQUrl        string
+	JwtSecretKey       string
 }
 
 //goland:noinspection SpellCheckingInspection
-func LoadConfig() (config Config, err error) {
+func LoadConfig() (c Config, err error) {
 	viper.AddConfigPath("./src/cmd/devapi/config/envs")
 
 	scope := os.Getenv("SCOPE")
@@ -34,7 +38,19 @@ func LoadConfig() (config Config, err error) {
 		return
 	}
 
-	err = viper.Unmarshal(&config)
+	err = viper.Unmarshal(&c)
+
+	c.DBUrl = readEnvironmentVariable("DB_URL")
+	c.RabbitMQUrl = readEnvironmentVariable("RABBITMQ_URL")
+	c.JwtSecretKey = readEnvironmentVariable("JWT_SECRET_KEY")
 
 	return
+}
+
+func readEnvironmentVariable(envName string) string {
+	envValue := os.Getenv(envName)
+	if len(envValue) == 0 {
+		panic(fmt.Sprintf("Environment Variable %s is not set", envName))
+	}
+	return envValue
 }

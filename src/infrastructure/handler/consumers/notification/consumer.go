@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"github.com/lumialvarez/go-common-tools/platform/rabbitmq"
 	"github.com/lumialvarez/go-common-tools/service/rabbitmq/notification/dto"
+	"github.com/lumialvarez/go-grpc-auth-service/src/cmd/devapi/config"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/handler/consumers/notification/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
-	"os"
 	"time"
 )
 
@@ -25,9 +25,8 @@ func NewConsumer(useCaseCreateNotification UseCaseCreateNotification) Consumer {
 	return Consumer{useCaseCreateNotification: useCaseCreateNotification}
 }
 
-func (consumer Consumer) Init() {
-	rabbitUrl := os.Getenv("RABBITMQ_URL")
-	rabbitmqClient := rabbitmq.Init(rabbitUrl)
+func (consumer Consumer) Init(config config.Config) {
+	rabbitmqClient := rabbitmq.Init(config.RabbitMQUrl)
 
 	q, err := rabbitmqClient.Channel.QueueDeclare(
 		"NOTIFICATION_QUEUE", // name

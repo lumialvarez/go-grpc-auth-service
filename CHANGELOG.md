@@ -3,6 +3,10 @@ Authorization Service
 
 ## [Unreleased]
 
+## [1.1.2] - 25/01/2024
+### Fixed
+- Add Github Action for pull request and create test
+
 ## [1.1.1] - 27/06/2023
 ### Fixed
 - Update dependencies

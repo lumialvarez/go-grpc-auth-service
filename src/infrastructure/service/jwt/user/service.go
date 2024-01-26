@@ -2,7 +2,7 @@ package serviceJwtUser
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user/dto"
 	"github.com/lumialvarez/go-grpc-auth-service/src/infrastructure/service/jwt/user/mapper"
 	"github.com/lumialvarez/go-grpc-auth-service/src/internal/user"
@@ -19,9 +19,9 @@ type Service struct {
 func (s *Service) GenerateToken(user *user.User) (signedToken string, err error) {
 	claims := s.Mapper.ToDTO(user)
 
-	claims.StandardClaims =
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(s.ExpirationHours)).Unix(),
+	claims.RegisteredClaims =
+		jwt.RegisteredClaims{
+			ExpiresAt: &jwt.NumericDate{Time: time.Now().Local().Add(time.Hour * time.Duration(s.ExpirationHours))},
 			Issuer:    s.Issuer,
 		}
 
@@ -56,7 +56,7 @@ func (s *Service) ValidateToken(signedToken string) (*user.User, error) {
 		return nil, errors.New("couldn't parse claims")
 	}
 
-	if claims.ExpiresAt < time.Now().Local().Unix() {
+	if claims.ExpiresAt.Unix() < time.Now().Local().Unix() {
 		//Fixme
 		return nil, errors.New("JWT is expired")
 	}
