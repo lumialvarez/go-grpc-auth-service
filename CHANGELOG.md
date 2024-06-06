@@ -3,6 +3,12 @@ Authorization Service
 
 ## [Unreleased]
 
+## [1.2.0] - 05/06/2024
+### Added
+- Add GitHub Action force to update changelog
+- Update dependencies
+- Delete replace-variables.py
+
 ## [1.1.2] - 25/01/2024
 ### Fixed
 - Add Github Action for pull request and create test
